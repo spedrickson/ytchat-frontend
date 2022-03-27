@@ -1,5 +1,5 @@
 <template>
-  <q-input v-model="apikey" type="password"/>
+  <q-input label="API Key:" v-model="apikey" type="password"/>
 </template>
 
 <script>

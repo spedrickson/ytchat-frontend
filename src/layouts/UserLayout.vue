@@ -1,30 +1,43 @@
 <template>
   <q-layout class="main-layout" view="hHh Lpr lff">
+    <api-key-dialog ref="apiKeyDialog"/>
     <q-header elevated height-hint="98">
       <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"/>
-        <author-header v-bind="author"/>
+
+        <q-btn dense flat round icon="search" @click="toggleSearch"/>
+        <q-toolbar-title>
+          <author-header v-bind="author" v-if="$route.params.channelID"/>
+        </q-toolbar-title>
+        <q-btn-dropdown icon="fas fa-lock" label="apikey">
+          <api-key-input/>
+        </q-btn-dropdown>
       </q-toolbar>
-      <q-tabs
-        v-model="tab"
-        dense
-        class="text-grey"
-        active-color="accent"
-        indicator-color="accent">
-        <q-tab name="messages" label="Messages">
-          <q-badge :label="`~${author?.messageCount}`"/>
-        </q-tab>
-        <q-tab name="modComments" label="Mod Comments"/>
-        <q-tab name="bans" label="Bans" />
-      </q-tabs>
+      <q-toolbar v-if="$route.params.channelID">
+        <q-btn label="ban" icon="fas fa-skull" dense><q-tooltip>not implemented for obvious reasons</q-tooltip></q-btn>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="accent"
+          indicator-color="accent">
+          <q-route-tab name="messages" label="Messages" :to="`/user/${$route.params.channelID}/messages`" exact>
+            <q-badge :label="`${author?.messageCount}`"/>
+          </q-route-tab>
+          <q-route-tab name="modComments" label="Mod Comments" :to="`/user/${$route.params.channelID}/modcomments`" exact>
+            <q-badge :label="`${author?.modcommentCount}`" color="negative" v-if="author?.modcommentCount"/>
+          </q-route-tab>
+          <q-tab name="bans" label="Bans">
+            <q-tooltip>not implemented lol</q-tooltip>
+          </q-tab>
+        </q-tabs>
+      </q-toolbar>
+
     </q-header>
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" elevated>
-      <user-search style="max-height: 100%"/>
-      <api-key-input/>
+    <q-drawer v-model="drawerLeft" side="left" :width="500" :persistent="false">
+      <better-user-search style="max-height: 100%" ref="authorSearch"/>
     </q-drawer>
     <q-page-container>
       <router-view v-if="$route.params.channelID" :channelID="$route.params.channelID" class="row-sm"/>
-<!--      <message-history v-if="$route.params.channelID" :channelID="$route.params.channelID" class="row-sm"/>-->
     </q-page-container>
   </q-layout>
 </template>
@@ -32,15 +45,34 @@
 import {ref} from 'vue'
 import {api} from "boot/axios";
 import AuthorHeader from "components/AuthorHeader";
-import UserSearch from "components/UserSearch";
 import MessageContext from "components/MessageContext"
 import MessageHistory from "components/MessageHistory";
-import {useRouter} from "vue-router";
 import ApiKeyInput from "components/ApiKeyInput";
+import {useMeta} from "quasar";
+import BetterUserSearch from "components/BetterUserSearch";
+import ApiKeyDialog from "layouts/ApiKeyDialog";
 
 export default {
-  components: {ApiKeyInput, UserSearch, AuthorHeader},
+  components: {ApiKeyInput, BetterUserSearch, AuthorHeader, ApiKeyDialog},
+  methods: {
+    toggleSearch() {
+      this.drawerLeft = !this.drawerLeft
+      this.$refs.authorSearch.focusInput()
+    },
+    authError() {
+      console.log('received auth error emit')
+      this.$refs.apiKeyDialog.show();
+    }
+  },
   setup() {
+    // page title will always reflect value of this
+    const title = ref('ytchat')
+    useMeta(() => {
+      return {
+        title: title.value
+      }
+    })
+
     const channelUrl = ref("")
     const imageUrl = ref("")
     const author = ref(null)
@@ -49,50 +81,47 @@ export default {
       name: ref("no user"),
       channelUrl,
       imageUrl,
-      leftDrawerOpen: false,
+      title,
+      drawerLeft: ref(false),
       author,
-      toggleLeftDrawer() {
-        this.leftDrawerOpen = !this.leftDrawerOpen
-      },
       fetchAuthor() {
         const url = `/channel/${this.channelID}?key=${this.$store.state.apikey.apikey}`
         // console.log(`querying url: ${url}`)
         api.get(url).then((data) => {
           this.author = data.data
+          this.title = `${author.value.name} - ytchat`
         }).catch((reason) => {
           console.log(`error when trying to query author info: ${reason}`);
           if (reason.response.status) {
+            this.authError()
             console.log('authentication error, please enter api key')
           }
         })
-      }
+      },
+
     }
   },
   created() {
-    console.log("layout create")
+    // console.log("layout create")
     if (this.$store.state.apikey.apikey.length === 0) {
       const localKey = localStorage.getItem('apikey')
       if (localKey) {
         this.$store.commit('apikey/setApikey', localKey)
       } else {
         console.log("api key was empty on load")
-        useRouter().push("/apikey")
       }
     }
   },
   updated() {
-    console.log("layout updated")
+    // console.log("layout updated")
     if (this.$route.params.channelID !== this.channelID) {
-      console.log("channelID changed!")
+      console.log("channelID changed, updating details")
       this.channelID = this.$route.params.channelID
       this.fetchAuthor()
-      // this.messages.splice(0, this.messages.length) // empty array
-      // this.$refs.messageScroll.reset();
-      // this.$refs.messageScroll.resume();
     }
   },
   mounted() {
-    console.log("layout mounted")
+    // console.log("layout mounted")
     this.channelID = this.$route.params.channelID;
     this.fetchAuthor()
   }

@@ -15,7 +15,10 @@
         <q-table :rows="messages" :pagination="{rowsPerPage: 0}" dense separator="vertical" :columns="columns">
           <template v-slot:header>
             <q-tr>
-              <q-btn class="load-btn">LOAD MORE</q-btn>
+              <q-btn class="load-btn">LOAD MORE
+              <q-tooltip>
+                not implemented yet, yell at spedrickson to fix
+              </q-tooltip></q-btn>
             </q-tr>
           </template>
           <template #body="row">
@@ -104,18 +107,24 @@ export default defineComponent({
         return this.$store.state.apikey.apikey
       },
       getContext() {
+        // const newerFilters = {
+        //   timestamp: {$gt: this.message.timestamp},
+        // }
+        // const olderFilters = {
+        //   timestamp: {$gt: this.message.timestamp},
+        // }
         const results = [this.message]
         const newer_url = `/messages/newer?key=${this.apikey()}&messageID=${this.messages[0]?._id ?? this.message._id}`
-        console.log(`querying for context: ${newer_url}`)
+        // console.log(`querying for context: ${newer_url}`)
         api.get(newer_url).then((data) => {
           results.push(...data.data)
         }).catch((reason) => {
           console.log(`error when fetching context (newer): ${reason.message}`)
         })
         const older_url = `/messages/older?key=${this.apikey()}&messageID=${this.messages[this.messages.length - 1]?._id ?? this.message._id}`
-        console.log(`querying for context: ${older_url}`)
+        // console.log(`querying for context: ${older_url}`)
         api.get(older_url).then(data => {
-          results.unshift(...data.data) // O(n) :(
+          results.unshift(...data.data.reverse()) // O(n) :(
           nextTick(() => {
             this.centerContext(null, 0)
           })

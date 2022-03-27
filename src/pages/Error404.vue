@@ -30,7 +30,7 @@ export default defineComponent({
   mounted() {
     if (this.$store.state.apikey.apikey.length === 0) {
       console.log("api key was empty on load")
-      useRouter().push("/apikey")
+      // useRouter().push("/apikey")
     }
   }
 });

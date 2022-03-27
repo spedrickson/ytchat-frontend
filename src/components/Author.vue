@@ -1,34 +1,35 @@
 <template>
   <span>
 
-    <q-avatar v-if="isChatSponsor"
+    <q-avatar v-if="author.isChatSponsor"
               icon="fas fa-dollar-sign" size="sm" font-size="1.4rem"
               class="badge-chat badge-sub col-sm">
       <q-tooltip>
         channel member
       </q-tooltip>
     </q-avatar>
-    <q-avatar v-if="isChatModerator"
+    <q-avatar v-if="author.isChatModerator"
               rounded size="sm"
               font-size="1.2rem"
               class="badge-chat badge-mod col-sm" icon="fas fa-wrench">
       <q-tooltip>moderator</q-tooltip>
     </q-avatar>
-    <q-avatar v-if="isChatOwner"
+    <q-avatar v-if="author.isChatOwner"
               rounded size="sm"
               font-size="1.1rem"
               icon="fas fa-video" class="badge-chat badge-owner col-2 overflow-hidden">
       <q-tooltip>channel owner</q-tooltip>
     </q-avatar>
-    <q-btn dense no-caps flat :to="`/user/${channelId}`" padding="0">
-      <template v-if="isVerified">
+<!--    <q-btn dense no-caps flat :to="`/user/${channelId}/messages`" padding="0">-->
+    <q-btn dense no-caps flat @click="clicked" padding="0" :to="`/user/${author.channelId}/messages`">
+      <template v-if="author.isVerified">
         <q-chip dense icon="fas fa-check" color="primary" class="author-name badge-chat">
-          {{ name.substring(0, nameMaxLen) }}
+          {{ author.name.substring(0, nameMaxLen) }}
         </q-chip>
         <!--      {{ name }}-->
       </template>
       <span v-else class="author-name">
-        {{ name.substring(0, nameMaxLen) }}
+        {{ author.name.substring(0, nameMaxLen) }}
       </span>
     </q-btn>
   </span>
@@ -37,21 +38,36 @@
 <script>
 import {defineComponent} from "vue";
 
-const nameMaxLen = 10
+const nameMaxLen = 25
 
 export default defineComponent({
     name: "Author",
+    emits: ['clicked'],
     props: {
-      name: {default: null},
-      channelId: {default: null},
-      channelUrl: {default: null},
-      // imageUrl: {default: null},
-      isChatOwner: {default: false},
-      isVerified: {default: false},
-      isChatModerator: {default: false},
-      isChatSponsor: {default: false},
-      badgeUrl: {default: null},
+      // name: {default: null},
+      // channelId: {default: null},
+      // channelUrl: {default: null},
+      // // imageUrl: {default: null},
+      // isChatOwner: {default: false},
+      // isVerified: {default: false},
+      // isChatModerator: {default: false},
+      // isChatSponsor: {default: false},
+      // badgeUrl: {default: null},
+      noNav: {type: Boolean, default: false},
+      author: {default: null},
     },
+  methods: {
+    clicked(e, go) {
+      e.preventDefault()
+      if (this.noNav) {
+        // console.log("no nav")
+        this.$emit('clicked', this.author)
+      } else {
+        // console.log("was nav")
+        go()
+      }
+    }
+  },
     setup() {
       return {nameMaxLen}
     }

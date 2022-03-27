@@ -1,7 +1,7 @@
 <template>
   <q-card>
     <q-card-section>
-      <q-input type="search" debounce="500" autogrow autofocus clearable label="search for user"
+      <q-input type="search" debounce="500" autogrow autofocus clearable dense label="search for user"
                class="q-pa-sm" :model-value="searchTerm" @update:model-value="fetchUserBySearch"
       @clear="clearUsers"/>
     </q-card-section>
@@ -28,7 +28,6 @@
 import {api} from "boot/axios";
 import {ref} from "vue";
 import Author from "components/Author";
-import {useRouter} from "vue-router";
 
 export default {
   name: "UserSearch",

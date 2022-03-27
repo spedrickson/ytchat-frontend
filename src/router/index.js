@@ -35,6 +35,12 @@ export default route(function (/* { store, ssrContext } */) {
     ),
   });
 
+  router.afterEach(to => {
+    if (to.meta.title) {
+      document.title = `${to.meta.title} - my blog`;
+    }
+  });
+
   // router.beforeEach(async (to, from) => {
   //   if (to.meta.requiresAuth) {
   //   } else {
