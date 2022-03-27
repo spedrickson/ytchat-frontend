@@ -29,8 +29,8 @@ module.exports = configure(function (ctx) {
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v5',
-      // 'fontawesome-v5',
+      // 'mdi-v6',
+      'fontawesome-v5',
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',
@@ -75,8 +75,9 @@ module.exports = configure(function (ctx) {
       server: {
         type: "http",
       },
+      webSocketServer: false,
       port: 8080,
-      open: true, // opens browser window automatically
+      open: false, // opens browser window automatically
     },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
@@ -121,7 +122,8 @@ module.exports = configure(function (ctx) {
       },
 
       middlewares: [
-        ctx.prod ? "compression" : "",
+        "compression",
+        //ctx.prod ? "compression" : "",
         "render", // keep this as last one
       ],
     },
