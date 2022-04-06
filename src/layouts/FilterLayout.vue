@@ -17,97 +17,39 @@
             <better-user-search @selected="addAuthor" no-nav/>
           </q-menu>
         </q-btn>
-        <q-btn v-show="users.size > 0" no-wrap no-caps color="negative" icon="fas fa-user-minus" label="Clear (show all users)" style="width: 100%;" @click="users.clear()" />
-        <q-table>
-          <template v-slot:header>
-            <q-btn-toggle v-model="userFilterType"
-            :options="[{label: 'Only these users', value: 'include'},{label: 'None of these users', value: 'exclude'}]"
-                          push
-                          @update:model-value="filtersModified = true">
-            </q-btn-toggle>
-          </template>
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td>
-                <q-avatar v-if="props.row.author.isChatSponsor"
-                          icon="fas fa-dollar-sign" size="sm" font-size="1.4rem"
-                          class="badge-chat badge-sub col-sm">
-                  <q-tooltip>
-                    channel member
-                  </q-tooltip>
-                </q-avatar>
-              </q-td>
-              <q-td>
-                <author :author="props.row.author"/>-->
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
-<!--        <q-list>-->
-<!--          <q-item v-for="[channelId, author] in users" :key="channelId">-->
-<!--            <q-chip removable @remove="removeAuthor(channelId)">-->
-<!--            </q-chip>-->
-<!--          </q-item>-->
-<!--        </q-list>-->
+        <q-btn v-show="users.size > 1" no-wrap no-caps color="negative" icon="fas fa-user-minus" label="Clear (show all users)" style="width: 100%;" @click="users.clear()" />
+        <q-btn-toggle v-show="this.users.size" no-caps v-model="userFilterType" push @update:model-value="modified"
+                      :options="[{label: 'Any of these users', value: 'include'},{label: 'None of these users', value: 'exclude'}]"/>
+        <q-list>
+          <q-item v-for="[channelId, author] in users" :key="channelId">
+            <q-chip removable @remove="removeAuthor(channelId)">
+              <author :author="author"/>
+            </q-chip>
+          </q-item>
+        </q-list>
       </q-expansion-item>
-      <q-expansion-item header-class="expand-header" class="col-auto" v-model="messageTypesExpanded" dense dense-toggle label="Message Types" icon="filter_list" :caption="typesCaption">
-        <q-option-group v-model="messageTypes" :options="messageOptions" type="checkbox" @update:model-value="filtersModified = true"/>
+      <q-expansion-item header-class="expand-header" class="col-auto" v-model="messageTypesExpanded" dense dense-toggle label="Message Types" icon="filter_list" :caption="typesCaption" cap>
+        <q-option-group v-model="messageTypes" :options="messageOptions" type="checkbox" @update:model-value="modified"/>
       </q-expansion-item>
       <q-expansion-item header-class="expand-header" class="col-auto" v-model="datesExpanded" dense dense-toggle label="Date/Time Range" icon="history">
-        <range-picker class="row" ref="rangePicker" @modified="filtersModified = true"/>
+        <range-picker class="row" ref="rangePicker" @modified="modified"/>
       </q-expansion-item>
       <q-expansion-item header-class="expand-header" class="col-auto" v-model="userTypesExpanded" dense dense-toggle label="User Types" icon="manage_accounts">
-        <q-card class="bg-warning text-dark">
+        <q-card class="bg-warning text-dark" v-show="userTypes.length">
           <q-card-section>
             NOTE: Setting a user type will hide all Super Chats, Super Stickers, and New Members
           </q-card-section>
         </q-card>
-          <q-btn-toggle v-model="isSponsor"
-                        :options="[
-                          {label: 'Plebs-only',value: 'false',},
-                          {label: 'Members-only',value: 'true'}]"
-                        @clear="isSponsor = 'ignore'"
-                        clearable
-                        push
-                        @update:model-value="filtersModified = true"
-                        class="user-type-toggle"
-                        spread rounded no-caps no-wrap/>
-        <q-btn-toggle v-model="isModerator"
-                      :options="[
-                          {label: 'Chatters-only',value: 'false',},
-                          {label: 'Mods-only',value: 'true'}]"
-                      @clear="isModerator = 'ignore'"
-                      clearable
-                      push
-                      @update:model-value="filtersModified = true"
-                      class="user-type-toggle"
-                      spread rounded no-caps no-wrap/>
-        <q-btn-toggle v-model="isVerified"
-                      :options="[
-                          {label: 'Unverified-only',value: 'false',},
-                          {label: 'Verified-only',value: 'true'}]"
-                      @clear="isVerified = 'ignore'"
-                      clearable
-                      push
-                      @update:model-value="filtersModified = true"
-                      class="user-type-toggle"
-                      spread rounded no-caps no-wrap/>
+        <q-btn-toggle no-caps v-model="userTypeFilterType" push @update:model-value="modified" v-show="userTypes.length"
+                      :options="[{label: 'Any of these types', value: 'include'},{label: 'None of these types', value: 'exclude'}]"/>
+        <q-option-group v-model="userTypes" :options="userTypeOptions" type="checkbox" @update:model-value="modified"/>
       </q-expansion-item>
-      <!--                      color="grey-9"-->
-      <!--                      text-color="grey-3"-->
-      <!--                      toggle-color="positive"-->
-      <div style="margin-top: auto">
-        <span>
-          <q-checkbox v-model="autoLoad" label="Autoload"/>
-          <q-checkbox v-model="autoScroll" label="Autoscroll"/>
-        </span>
-      </div>
       <q-page-sticky v-show="filtersModified" position="bottom-right" :offset="[10, 10]">
-        <q-btn fab @click="updateFilters" color="positive" label="Apply" icon="refresh"/>
+        <q-btn fab @click="setUrlFromFilters" color="positive" label="Apply" icon="refresh"/>
       </q-page-sticky>
     </q-drawer>
     <q-page-container style="padding-top: 0">
-      <filtered-history :filters="filters" ref="history" @auth-error="authError" @autoscroll-disabled="autoScroll = false"/>
+      <filtered-history :filters="filters" ref="history" @auth-error="authError"/>
     </q-page-container>
   </q-layout>
 </template>
@@ -128,15 +70,32 @@ export default defineComponent({
       filters: {},
     }
   },
+  watch: {
+    messageTypesExpanded() {
+      this.updateCaptions();
+    }
+  },
   setup() {
+    const urlKeyMap = {
+      "author.isChatSponsor": "isSponsor",
+      "author.isChatModerator": "isModerator",
+      "author.isVerified": "isVerified",
+    }
+    function renameQueryFilters(obj) {
+      const keyValues = Object.keys(obj).map(key => {
+        const newKey = urlKeyMap[key] || key;
+        return { [newKey]: obj[key] };
+      });
+      return Object.assign({}, ...keyValues);
+    }
     return {
+      renameQueryFilters,
       userFilterType: ref('include'),
+      userTypeFilterType: ref('include'),
       userTypesExpanded: ref(true),
       messageTypesExpanded: ref(true),
       datesExpanded: ref(false),
       usersExpanded: ref(true),
-      autoLoad: ref(false),
-      autoScroll: ref(true),
       isSponsor: ref('ignore'),
       isModerator: ref('ignore'),
       isVerified: ref('ignore'),
@@ -151,7 +110,6 @@ export default defineComponent({
       messageOptions: [
         {
           label: "Super Chats ($$$)",
-          icon: "filter_list",
           value: "superChat"
         },{
           label: "Text Messages",
@@ -164,33 +122,26 @@ export default defineComponent({
           value: "superSticker"
         }
       ],
+      userTypeOptions: [
+        {
+          label: "Moderator",
+          value: "author.isChatModerator"
+        },{
+          label: "Verified",
+          value: "author.isVerified"
+        },{
+          label: "Member (Sub)",
+          value: "author.isChatSponsor"
+        }
+      ],
       drawerLeft: ref(true),
     }
   },
   mounted() {
-    if (this.autoScroll) this.$refs.history.startAutoScroll();
     this.setFiltersFromUrl();
   },
-  watch: {
-    autoLoad(value) {
-      console.log(`autoload: ${value}`)
-      if (value) {
-        this.$refs.history.startAutoLoad()
-      } else {
-        this.$refs.history.stopAutoLoad()
-      }
-    },
-    autoScroll(value) {
-      console.log(`autoscroll: ${value}`)
-      if (value) {
-        this.$refs.history.startAutoScroll()
-      } else {
-        this.$refs.history.stopAutoScroll()
-      }
-    }
-  },
   created() {
-    console.log("filtered layout create")
+    // console.log("filtered layout create")
     if (this.$store.state.apikey.apikey.length === 0) {
       const localKey = localStorage.getItem('apikey')
       if (localKey) {
@@ -199,19 +150,21 @@ export default defineComponent({
         console.log("api key was empty on load")
       }
     }
-    // console.log(this.$route.query)
-
   },
   methods: {
+    modified() {
+      // console.log('modified')
+      this.filtersModified = true;
+      this.updateCaptions();
+    },
     addAuthor(author) {
-      this.filtersModified = true
       this.users.set(author.channelId, author)
-      // console.log(`there are ${this.users.size} items`)
+      this.modified()
     },
     removeAuthor(channelId) {
       console.log(`removing author: ${channelId}`)
-      this.filtersModified = true
       this.users.delete(channelId)
+      this.modified()
     },
     authError() {
       console.log('received auth error emit')
@@ -221,8 +174,10 @@ export default defineComponent({
       this.drawerLeft = !this.drawerLeft
     },
     updateCaptions() {
-      if (this.messageTypes.length === this.messageOptions.length) {
+      if (this.messageTypesExpanded) {
         this.typesCaption = ''
+      } else if (this.messageTypes.length === this.messageOptions.length) {
+        this.typesCaption = 'all'
       } else if (this.messageTypes.length === 0) {
         this.typesCaption = "you have to select at least one type..."
       } else {
@@ -231,11 +186,9 @@ export default defineComponent({
     },
     getFilters() {
       const result = {filters: {}, sort: {timestamp: -1}};
-      // console.log(this.messageTypes)
       const beforeTimestamp = this.rangePicker?.getBeforeTimestamp();
       const afterTimestamp = this.rangePicker?.getAfterTimestamp();
       if (beforeTimestamp || afterTimestamp) {
-        // console.log("had at least one timestamp filter")
         result.filters.timestamp = {
           "$lte": beforeTimestamp,
           "$gte": afterTimestamp,
@@ -245,17 +198,31 @@ export default defineComponent({
       }
 
       if (this.users.size) {
-        result.filters['author.channelId'] = {
-          $in: Array.from(this.users.keys())
+        if (this.userFilterType === "exclude") {
+          result.filters['author.channelId'] = {
+            $nin: Array.from(this.users.keys())
+          }
+        } else {
+          result.filters['author.channelId'] = {
+            $in: Array.from(this.users.keys())
+          }
         }
       }
-      if (this.messageTypes.length !== this.messageOptions.length) {
-        result.filters.type = {"$in": this.messageTypes}; // remove undefined/null values
+
+      if (this.userTypes.length) {
+        const filterBool = this.userTypeFilterType !== "exclude"
+        // console.log(`user types: ${this.userTypes}`)
+        result.filters['$or'] = this.userTypes.map((t) => {
+          console.log(t)
+          const type = {}
+          type[t] = filterBool
+          return type
+        })
       }
 
-      if (this.isSponsor !== 'ignore') result.filters['author.isChatSponsor'] = this.isSponsor === 'true'
-      if (this.isModerator !== 'ignore') result.filters['author.isChatModerator'] = this.isModerator === 'true'
-      if (this.isVerified !== 'ignore') result.filters['author.isVerified'] = this.isVerified === 'true'
+      if (this.messageTypes.length !== this.messageOptions.length) {
+        result.filters.type = {"$in": this.messageTypes};
+      }
       return result
     },
     updateFilters() {
@@ -282,15 +249,30 @@ export default defineComponent({
         this.messageOptions.forEach(n => this.messageTypes.push(n.value))
       }
       if (query.isSponsor != null) {
-        console.log("is sponsor")
-        this.isSponsor = query.sponsor.toLowerCase() === "true" ? "true" : "false";
+        this.isSponsor = query.isSponsor.toLowerCase() === "true" ? "true" : "false";
       }
-      // if (query.isSponsor !== 'ignore') this.isSponsor = query.isSponsor === "true";
+      if (query.isVerified != null) {
+        this.isVerified = query.isVerified.toLowerCase() === "true" ? "true" : "false";
+      }
       // if (query.isOwner !== 'ignore') this.isOwner = query.isOwner === "true";
-      // if (query.isVerified !== 'ignore') this.isVerified = query.isVerified === "true";
 
-      console.log(this.messageTypes)
+      // console.log(this.messageTypes)
       nextTick(this.updateFilters)
+    },
+
+    setUrlFromFilters() {
+      console.log("getting URL from filters")
+      const filters = this.getFilters().filters
+      delete filters['$or']
+      if (this.userTypes.length) {
+        console.log('manually adding user type')
+        this.userTypes.forEach(e => filters[e] = true)
+      }
+      const queryFilters = this.renameQueryFilters(filters)
+
+      console.log(queryFilters)
+      this.$router.push({ query: queryFilters })
+      this.updateFilters() // TODO: remove
     }
   },
 })
