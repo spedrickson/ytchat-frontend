@@ -26,10 +26,14 @@
           <q-route-tab name="modComments" label="Mod Comments" :to="`/user/${$route.params.channelID}/modcomments`" exact>
             <q-badge :label="`${author?.modcommentCount}`" color="negative" v-if="author?.modcommentCount"/>
           </q-route-tab>
-          <q-tab name="bans" label="Bans">
-            <q-tooltip>not implemented lol</q-tooltip>
-          </q-tab>
         </q-tabs>
+        <q-card class="bg-negative q-pa-none q-gutter-none" v-if="author?.isBanned">
+          <q-card-section>
+            <q-icon name="fas fa-skull"/>
+            User is (probably) banned!!
+<!--            <q-btn size="sm" label="Unban"><q-tooltip>not implemented lol</q-tooltip></q-btn>-->
+          </q-card-section>
+        </q-card>
       </q-toolbar>
 
     </q-header>
