@@ -48,7 +48,7 @@
         <q-btn fab @click="setUrlFromFilters" color="positive" label="Apply" icon="refresh"/>
       </q-page-sticky>
     </q-drawer>
-    <q-page-container style="padding-top: 0">
+    <q-page-container style="padding-top: 3vh">
       <filtered-history :filters="filters" ref="history" @auth-error="authError"/>
     </q-page-container>
   </q-layout>

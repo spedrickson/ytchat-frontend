@@ -1,5 +1,5 @@
 <template>
-    <q-card class="column justify-center" style="height: 97vh">
+  <q-card class="column justify-center" style="height: 95vh">
     <q-scroll-area class="col" id="scroll-area" ref="scrollTarget">
       <q-btn v-intersection="intersectTop"  loading="loading" dense label="auto load new messages" outline rounded color="positive" @click="toggleAutoLoad">
         <template v-slot:loading>
@@ -28,8 +28,7 @@
         <q-tooltip>scroll to bottom</q-tooltip>
       </q-btn>
     </q-page-sticky>
-    </q-card>
-
+  </q-card>
 </template>
 
 <script>
@@ -51,6 +50,7 @@ export default defineComponent({
     return {
       autoLoadIntervalId: ref(0),
       autoScrollIntervalId: ref(0),
+      newMessageCount: ref(0),
       needsScrollToBottom: false,
       messages: ref([]),
       loading: false,
@@ -113,20 +113,22 @@ export default defineComponent({
       console.log("starting auto scroll")
       this.autoScrollIntervalId = setInterval(() => {
         // console.log("auto scrolling")
+        this.newMessageCount = 0
         this.$refs.scrollTarget.setScrollPercentage('vertical', 1.0)
         //(this.messages.length - 1, 'end-force')
       }, 250)
-    },
-    scrollToItem(index) {
-      this.$refs.virtualListRef.scrollTo(index, 'end-force')
-    },
-    scrollToBottom() {
-      this.$refs.scrollTarget.setScrollPercentage('vertical', 1.0)
     },
     stopAutoScroll() {
       clearInterval(this.autoScrollIntervalId)
       this.autoScrollIntervalId = 0;
       this.$emit('autoscroll-disabled')
+    },
+    scrollToItem(index) {
+      this.$refs.virtualListRef.scrollTo(index, 'end-force')
+    },
+    scrollToBottom() {
+      this.newMessageCount = 0
+      this.$refs.scrollTarget.setScrollPercentage('vertical', 1.0)
     },
     onVirtualScroll(item) {
       if (this.needsScrollToBottom) {
@@ -158,7 +160,6 @@ export default defineComponent({
         return
       }
       this.loading = true
-      this.buttonLoading = true
       const url = `/messages?key=${this.apikey()}`
       const filters = this.filters
       if (this.messages.length) {
@@ -183,7 +184,6 @@ export default defineComponent({
         }
       }).finally(() => {
         this.loading = false
-        this.buttonLoading = false
       });
     },
 
@@ -194,7 +194,6 @@ export default defineComponent({
         return
       }
       this.loading = true
-      this.buttonLoading = true
       const url = `/messages?key=${this.apikey()}`
       const filters = this.filters
       if (this.messages.length) {
@@ -217,7 +216,6 @@ export default defineComponent({
         }
       }).finally(() => {
         this.loading = false
-        this.buttonLoading = false
       });
     },
 
