@@ -1,9 +1,8 @@
 <template>
-  <q-layout class="main-layout" view="hHh Lpr lff">
+  <q-layout class="main-layout" view="hHh Lpr lff" style="display: flex">
     <api-key-dialog ref="apiKeyDialog"/>
-    <q-header elevated height-hint="98">
+    <q-header elevated>
       <q-toolbar>
-
         <q-btn dense flat round icon="search" @click="toggleSearch"/>
         <q-toolbar-title>
           <author-header v-bind="author" v-if="$route.params.channelID"/>
@@ -35,14 +34,15 @@
           </q-card-section>
         </q-card>
       </q-toolbar>
-
     </q-header>
+    <router-view v-if="$route.params.channelID" :channelID="$route.params.channelID" style="padding-top: 100px"/>
     <q-drawer v-model="drawerLeft" side="left" :width="500" :persistent="false">
       <better-user-search style="max-height: 100%" ref="authorSearch"/>
     </q-drawer>
-    <q-page-container>
-      <router-view v-if="$route.params.channelID" :channelID="$route.params.channelID" class="row-sm"/>
-    </q-page-container>
+<!--    <q-page-container>-->
+<!--      <q-page style="display: flex; margin: 0; padding: 0;">-->
+<!--      </q-page>-->
+<!--    </q-page-container>-->
   </q-layout>
 </template>
 <script>
@@ -50,7 +50,6 @@ import {ref} from 'vue'
 import {api} from "boot/axios";
 import AuthorHeader from "components/AuthorHeader";
 import MessageContext from "components/MessageContext"
-import MessageHistory from "components/MessageHistory";
 import ApiKeyInput from "components/ApiKeyInput";
 import {useMeta} from "quasar";
 import BetterUserSearch from "components/BetterUserSearch";
@@ -66,7 +65,7 @@ export default {
     authError() {
       console.log('received auth error emit')
       this.$refs.apiKeyDialog.show();
-    }
+    },
   },
   setup() {
     // page title will always reflect value of this
@@ -96,13 +95,11 @@ export default {
           this.title = `${author.value.name} - ytchat`
         }).catch((reason) => {
           console.log(`error when trying to query author info: ${reason}`);
-          if (reason.response.status) {
+          if (reason.response.status === 401) {
             this.authError()
-            console.log('authentication error, please enter api key')
           }
         })
       },
-
     }
   },
   created() {
@@ -127,6 +124,7 @@ export default {
   mounted() {
     // console.log("layout mounted")
     this.channelID = this.$route.params.channelID;
+    // this.$refs.history.newFilters({filters: {'author.channelId': this.channelID}, sort: {timestamp: -1}})
     this.fetchAuthor()
   }
 }

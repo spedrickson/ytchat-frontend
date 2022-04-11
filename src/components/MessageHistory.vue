@@ -1,26 +1,27 @@
 <template>
-  <div class="container-fluid">
-    <div class="text-center" v-if="messages.length === 0">
-      <h2>No messages</h2>
-    </div>
-    <div class="full-width">
-      <message-skeleton v-if="loadOnScroll" v-intersection="autoLoadTop"/>
-    </div>
-    <q-virtual-scroll @scroll="onScroll" v-if="messages.length" :items="messages" ref="scrollRef" dense @virtual-scroll="virtualScroll">
-      <template v-slot="row"><message :message="row.item" show-datetime/></template>
-    </q-virtual-scroll>
-<!--    <q-infinite-scroll debounce="1000" class="q-pa-md" @load=fetchMessages ref="messageScroll" reverse scroll-target="">-->
-<!--      <template v-slot:loading>-->
-<!--        <q-spinner class="row justify-center q-my-md" color="primary" name="dots" size="40px"/>-->
-<!--      </template>-->
-<!--      <message class="q-py-sm" v-for="(message, index) in messages" :key="message._id"-->
-<!--               :message="messages[(messages.length - 1) - index]" show-datetime/>-->
-<!--    </q-infinite-scroll>-->
-    <q-btn @click="fetchNewMessages" :loading="loadingNewMessages" icon="fas fa-sync" class="refresh-btn"><q-tooltip>
-      this button is broken right now, it works but adds stuff in reverse and keeps adding the same messages will fix later sorry
-      just use f5 for now
-    </q-tooltip></q-btn>
-  </div>
+  <filtered-history ref="history" class="column col-grow"  @auth-error="$emit('auth-error')"/>
+<!--  <div class="container-fluid">-->
+<!--    <div class="text-center" v-if="messages.length === 0">-->
+<!--      <h2>No messages</h2>-->
+<!--    </div>-->
+<!--    <div class="full-width">-->
+<!--      <message-skeleton v-if="loadOnScroll" v-intersection="autoLoadTop"/>-->
+<!--    </div>-->
+<!--    <q-virtual-scroll @scroll="onScroll" v-if="messages.length" :items="messages" ref="scrollRef" dense @virtual-scroll="virtualScroll">-->
+<!--      <template v-slot="row"><message :message="row.item" show-datetime/></template>-->
+<!--    </q-virtual-scroll>-->
+<!--&lt;!&ndash;    <q-infinite-scroll debounce="1000" class="q-pa-md" @load=fetchMessages ref="messageScroll" reverse scroll-target="">&ndash;&gt;-->
+<!--&lt;!&ndash;      <template v-slot:loading>&ndash;&gt;-->
+<!--&lt;!&ndash;        <q-spinner class="row justify-center q-my-md" color="primary" name="dots" size="40px"/>&ndash;&gt;-->
+<!--&lt;!&ndash;      </template>&ndash;&gt;-->
+<!--&lt;!&ndash;      <message class="q-py-sm" v-for="(message, index) in messages" :key="message._id"&ndash;&gt;-->
+<!--&lt;!&ndash;               :message="messages[(messages.length - 1) - index]" show-datetime/>&ndash;&gt;-->
+<!--&lt;!&ndash;    </q-infinite-scroll>&ndash;&gt;-->
+<!--    <q-btn @click="fetchNewMessages" :loading="loadingNewMessages" icon="fas fa-sync" class="refresh-btn"><q-tooltip>-->
+<!--      this button is broken right now, it works but adds stuff in reverse and keeps adding the same messages will fix later sorry-->
+<!--      just use f5 for now-->
+<!--    </q-tooltip></q-btn>-->
+<!--  </div>-->
 </template>
 
 <script>
@@ -28,13 +29,23 @@ import {defineComponent, nextTick, ref} from "vue";
 import Message from "components/Message";
 import {api} from 'boot/axios.js'
 import MessageSkeleton from "components/MessageSkeleton";
+import FilteredHistory from "components/FilteredHistory";
 
 export default defineComponent({
   name: "MessageHistory",
-  components: {MessageSkeleton, Message},
+  components: {FilteredHistory},
   setup() {
     return {
       scrollRef: ref(null),
+    }
+  },
+  watch: {
+    channelID(newVal, oldVal) {
+      if (oldVal) {
+
+        console.log(`channel id changed: ${oldVal} -> ${newVal}`)
+        this.$refs.history.newFilters({filters: {'author.channelId': newVal}, sort: {timestamp: -1}})
+      }
     }
   },
   data() {
@@ -52,7 +63,9 @@ export default defineComponent({
     console.log("history mounted")
     this.channelID = this.channelID ?? this.$route.params.channelID;
     this.scrollRef = this.$refs.scrollRef
-    this.fetchMessages();
+    this.$refs.history.newFilters({filters: {'author.channelId': this.channelID}, sort: {timestamp: -1}})
+
+    // this.fetchMessages();
   },
   created() {
     // console.log("history created")
@@ -63,8 +76,8 @@ export default defineComponent({
     if (this.$route.params.channelID !== this.channelID) {
       this.channelID = this.$route.params.channelID
       console.log("channelID changed, reloading message history")
-      this.messages.splice(0, this.messages.length) // empty array
-      this.fetchMessages()
+      // this.messages.splice(0, this.messages.length) // empty array
+      // this.fetchMessages()
       // this.$refs.messageScroll?.reset();
       // this.$refs.messageScroll?.resume();
     }

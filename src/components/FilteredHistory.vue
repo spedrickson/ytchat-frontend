@@ -1,11 +1,12 @@
 <template>
-  <q-card class="column justify-center" style="height: 95vh">
-    <q-scroll-area class="col" id="scroll-area" ref="scrollTarget">
-      <q-btn v-intersection="intersectTop"  loading="loading" dense label="auto load new messages" outline rounded color="positive" @click="toggleAutoLoad">
+  <q-card class="main-card">
+    <q-scroll-area class="fit" style="min-height: 400px" id="scroll-area" ref="scrollTarget">
+      <q-btn v-if="!reachedBeginning" v-intersection="intersectTop" :loading="loading" dense label="auto load new messages" outline rounded color="positive" @click="toggleAutoLoad">
         <template v-slot:loading>
-          <q-spinner-bars color="accent"/>
+          <q-spinner-hourglass color="accent"/>
         </template>
       </q-btn>
+      <q-card @click="reachedBeginning = false" v-if="reachedBeginning"><q-icon name="fas fa-hourglass-empty"/>reach beginning of history with current filters...</q-card>
       <q-virtual-scroll :items="messages" ref="virtualListRef" dense @virtual-scroll="onVirtualScroll" component="q-list" scroll-target="#scroll-area > .scroll" virtual-scroll-item-size="32">
         <template v-slot="{ item, index }">
           <q-item :key="index" dense>
@@ -48,6 +49,7 @@ export default defineComponent({
   },
   setup() {
     return {
+      reachedBeginning: ref(false),
       autoLoadIntervalId: ref(0),
       autoScrollIntervalId: ref(0),
       newMessageCount: ref(0),
@@ -59,7 +61,7 @@ export default defineComponent({
     };
   },
   beforeUnmount() {
-    console.log("unmounting, disabling intervals")
+    // console.log("unmounting, disabling intervals")
     this.stopAutoScroll();
     this.stopAutoLoad();
   },
@@ -73,29 +75,29 @@ export default defineComponent({
     },
     intersectBottom(entry) {
       if (entry.isIntersecting === true) {
-        console.log("scrolled to bottom, re-enabling autoscroll and autoload")
+        // console.log("scrolled to bottom, re-enabling autoscroll and autoload")
         this.startAutoScroll()
       }
     },
     intersectTop(entry) {
       if (entry.isIntersecting === true && this.messages.length > 0) {
-        console.log("scrolled to top, loading more messages")
+        // console.log("scrolled to top, loading more messages")
         this.fetchOlderMessages()
       }
     },
     onScroll(event) {
       if (event.direction === "up") {
-        console.log("scrolled up, disabling auto-scroll")
+        // console.log("scrolled up, disabling auto-scroll")
         this.stopAutoScroll()
         this.stopAutoLoad()
       }
     },
     startAutoLoad() {
       if (this.autoLoadIntervalId) {
-        console.log("tried to start autoload when already running")
+        // console.log("tried to start autoload when already running")
         return
       }
-      console.log("starting auto load")
+      // console.log("starting auto load")
       this.autoLoadIntervalId = setInterval(() => {
         // console.log("auto fetching")
         this.fetchMessages();
@@ -107,10 +109,10 @@ export default defineComponent({
     },
     startAutoScroll() {
       if (this.autoScrollIntervalId) {
-        console.log("tried to start autoscroll when already running")
+        // console.log("tried to start autoscroll when already running")
         return
       }
-      console.log("starting auto scroll")
+      // console.log("starting auto scroll")
       this.autoScrollIntervalId = setInterval(() => {
         // console.log("auto scrolling")
         this.newMessageCount = 0
@@ -139,12 +141,11 @@ export default defineComponent({
       }
     },
     newFilters(filters) {
+      console.log('received new filters')
       this.filters = filters;
-      this.clearMessages();
+      this.reachedBeginning = false;
+      this.messages.length = 0; // why is this the way to clear a list javascript...
       this.fetchMessages();
-    },
-    clearMessages() {
-      this.messages.length = 0;
     },
     trimMessages() {
       const lengthDiff = this.messages.length - MESSAGE_CAP
@@ -156,7 +157,7 @@ export default defineComponent({
 
     fetchMessages() {
       if (this.loading) {
-        console.log("tried to double load")
+        // console.log("tried to double load")
         return
       }
       this.loading = true
@@ -168,7 +169,7 @@ export default defineComponent({
       }
       api.post(url, this.filters).then((data) => {
         if (data.data.length > 0) {
-          console.log(`received some data: ${data.data.length}`)
+          // console.log(`received some data: ${data.data.length}`)
           this.messages = this.messages.concat(data.data.reverse());
           this.trimMessages();
           nextTick(() => {
@@ -188,11 +189,15 @@ export default defineComponent({
     },
 
     fetchOlderMessages() {
-      console.log('fetching older messages')
       if (this.loading) {
         console.log("tried to double load")
         return
       }
+      if (this.reachedBeginning) {
+        console.log('reached beginning, skipping load')
+        return
+      }
+      console.log('fetching older messages')
       this.loading = true
       const url = `/messages?key=${this.apikey()}`
       const filters = this.filters
@@ -201,12 +206,16 @@ export default defineComponent({
         filters.filters.timestamp = {'$lt': this.messages[0]['timestamp']}
       }
       api.post(url, this.filters).then((data) => {
-        if (data.data.length > 0) {
+        if (data.data.length) {
           console.log(`received some data: ${data.data.length}`)
           this.messages = data.data.reverse().concat(this.messages)
+          if (data.data.length < 100) this.reachedBeginning = true;
           nextTick(() => {
             this.$refs.virtualListRef.scrollTo(data.data.length - 1, 'start-force')
           })
+        } else {
+          console.log("reached beginning of history, disabling auto load of older messages")
+          this.reachedBeginning = true;
         }
       }).catch(reason => {
         console.log(`error when trying to query filtered messages info: ${reason}`);
@@ -230,4 +239,7 @@ export default defineComponent({
 .refresh-btn
   background: darkslategrey
   width: 100%
+.main-card
+  display: flex
+  align-items: stretch
 </style>

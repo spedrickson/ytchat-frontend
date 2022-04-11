@@ -1,36 +1,39 @@
 <template>
-  <div class="container-fluid">
-    <div class="text-center" v-if="comments.length === 0">
-      <h2>No mod comments</h2>
-    </div>
-    <q-infinite-scroll class="q-pa-md" @load=fetchComments ref="commentScroll" reverse>
-<!--      <template v-slot:loading>-->
-<!--        <q-spinner class="row justify-center q-my-md" color="primary" name="dots" size="40px"/>-->
-<!--      </template>-->
-      <div class="q-py-sm" v-for="(comment, index) in comments" :key="index">
-        <span>
-          {{agoString(comment._id)}}
-          <q-tooltip>
-            {{ dateFromMongoId(comment._id) }}
-          </q-tooltip>
-        </span>
-        <span>
-           - {{comment.modName}} -
-        </span>
-        <span>
-          {{comment.text}}
-        </span>
+  <q-card style="padding-top: 100px">
+    <q-card-section>
+      <div class="text-center" v-if="comments.length === 0">
+        <h2>No mod comments</h2>
       </div>
-    </q-infinite-scroll>
+      <q-infinite-scroll class="q-pa-md" @load=fetchComments ref="commentScroll" reverse>
+        <div class="q-py-sm" v-for="(comment, index) in comments" :key="index">
+          <span>
+            {{agoString(comment._id)}}
+            <q-tooltip>
+              {{ dateFromMongoId(comment._id) }}
+            </q-tooltip>
+          </span>
+          <span>
+             - {{comment.modName}} -
+          </span>
+          <span>
+            {{comment.text}}
+          </span>
+        </div>
+      </q-infinite-scroll>
 
-    <q-input
-      v-model="text"
-      filled
-      type="textarea"
-      label="add comment about user..."
-    />
-    <q-btn @click="insertComment" :loading="loadingNewMessages" label="submit comment" class="refresh-btn"/>
-  </div>
+    </q-card-section>
+    <q-card-actions>
+      <q-input
+        v-model="text"
+        style="width: 100%"
+        filled
+        autogrow
+        type="textarea"
+        label="add comment about user..."
+      />
+      <q-btn @click="insertComment" :loading="loadingNewMessages" label="submit comment" class="refresh-btn"/>
+    </q-card-actions>
+  </q-card>
 </template>
 
 <script>
@@ -125,7 +128,7 @@ export default defineComponent({
         }
       }).catch((reason) => {
         console.log(`error when trying to query author info: ${reason}`);
-        if (reason.response.status) {
+        if (reason.response.status === 401) {
           console.log('authentication error, please enter api key')
         }
       }).finally(() => {
