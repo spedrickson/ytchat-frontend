@@ -15,8 +15,10 @@
     "@quasar/extras": "^1.13.3",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "dinero.js": "^2.0.0-alpha.8",
+    "google-auth-library": "^7.14.1",
+    "google-one-tap": "^1.0.3",
     "humanize-duration": "^3.27.1",
+    "jsonwebtoken": "^8.5.1",
     "quasar": "^2.6.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
@@ -30,7 +32,8 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.0.0",
     "eslint-webpack-plugin": "^2.4.0",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "quasar-app-extension-ide-helper": "^1.0.0"
   },
   "browserslist": [
     "last 10 Chrome versions",
