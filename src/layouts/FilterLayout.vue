@@ -1,15 +1,16 @@
 <template>
-  <q-layout class="main-layout" view="hHh Lpr lff">
+  <q-layout class="main-layout" view="hHh Lpr lff" style="display: flex">
     <api-key-dialog ref="apiKeyDialog"/>
     <q-header elevated height-hint="98">
       <q-toolbar>
-        <q-btn dense flat round icon="fas fa-filter" @click="toggleSearch"/>
+        <q-btn dense flat round icon="fas fa-filter" @click="this.drawerLeft = !this.drawerLeft"/>
         <q-toolbar-title>filtered ytchat</q-toolbar-title>
         <q-btn-dropdown icon="fas fa-lock" label="apikey">
           <api-key-input/>
         </q-btn-dropdown>
       </q-toolbar>
     </q-header>
+    <filtered-history :filters="filters" ref="history" @auth-error="authError" style="min-height: 400px; padding-top: 100px"/>
     <q-drawer elevated v-model="drawerLeft" side="left" :persistent="false" class="column q-pa-sm">
       <q-expansion-item header-class="expand-header" class="col-auto" v-model="usersExpanded" dense dense-toggle label="Users"  icon="person_search">
         <q-btn no-wrap no-caps color="primary" icon="fas fa-user-plus" label="Add users to filter" style="width: 100%;">
@@ -48,9 +49,6 @@
         <q-btn fab @click="setUrlFromFilters" color="positive" label="Apply" icon="refresh"/>
       </q-page-sticky>
     </q-drawer>
-    <q-page-container style="padding-top: 3vh">
-      <filtered-history :filters="filters" ref="history" @auth-error="authError"/>
-    </q-page-container>
   </q-layout>
 </template>
 <script>
@@ -106,49 +104,27 @@ export default defineComponent({
       messageTypes: ref([]),
       userTypes: ref([]),
       users: ref(new Map()),
+      drawerLeft: ref(true),
       typesCaption: ref(''),
       messageOptions: [
-        {
-          label: "Super Chats ($$$)",
-          value: "superChat"
-        },{
-          label: "Text Messages",
-          value: "textMessage"
-        },{
-          label: "New Members",
-          value: "newSponsor"
-        },{
-          label: "Super Stickers",
-          value: "superSticker"
-        }
+        {label: "Super Chats ($$$)", value: "superChat"},
+        {label: "Text Messages", value: "textMessage"},
+        {label: "New Members", value: "newSponsor"},
+        {label: "Super Stickers", value: "superSticker"}
       ],
       userTypeOptions: [
-        {
-          label: "Moderator",
-          value: "author.isChatModerator"
-        },{
-          label: "Verified",
-          value: "author.isVerified"
-        },{
-          label: "Member (Sub)",
-          value: "author.isChatSponsor"
-        }
+        {label: "Moderator", value: "author.isChatModerator"},
+        {label: "Verified", value: "author.isVerified"},
+        {label: "Member (Sub)", value: "author.isChatSponsor"}
       ],
-      drawerLeft: ref(true),
     }
   },
-  mounted() {
-    this.setFiltersFromUrl();
-  },
+  mounted() {this.setFiltersFromUrl()},
   created() {
-    // console.log("filtered layout create")
     if (this.$store.state.apikey.apikey.length === 0) {
       const localKey = localStorage.getItem('apikey')
-      if (localKey) {
-        this.$store.commit('apikey/setApikey', localKey)
-      } else {
-        console.log("api key was empty on load")
-      }
+      if (localKey) this.$store.commit('apikey/setApikey', localKey)
+      else console.log("api key was empty on load")
     }
   },
   methods: {
@@ -166,23 +142,12 @@ export default defineComponent({
       this.users.delete(channelId)
       this.modified()
     },
-    authError() {
-      console.log('received auth error emit')
-      this.$refs.apiKeyDialog.show();
-    },
-    toggleSearch() {
-      this.drawerLeft = !this.drawerLeft
-    },
+    authError() {this.$refs.apiKeyDialog.show()},
     updateCaptions() {
-      if (this.messageTypesExpanded) {
-        this.typesCaption = ''
-      } else if (this.messageTypes.length === this.messageOptions.length) {
-        this.typesCaption = 'all'
-      } else if (this.messageTypes.length === 0) {
-        this.typesCaption = "you have to select at least one type..."
-      } else {
-        this.typesCaption = this.messageTypes.join(', ')
-      }
+      if (this.messageTypesExpanded) this.typesCaption = ''
+      else if (this.messageTypes.length === this.messageOptions.length) this.typesCaption = 'all'
+      else if (this.messageTypes.length === 0) this.typesCaption = "you have to select at least one type..."
+      else this.typesCaption = this.messageTypes.join(', ')
     },
     getFilters() {
       const result = {filters: {}, sort: {timestamp: -1}};
@@ -238,25 +203,13 @@ export default defineComponent({
       const query = this.$route.query
       if (query.types) {
         this.messageTypes.splice(0, this.messageTypes.length)
-        if (Array.isArray(query.types)) {
-          // console.log("was array")
-          query.types.forEach(n => this.messageTypes.push(n))
-        } else {
-          // console.log("not array")
-          this.messageTypes.push(query.types)
-        }
-      } else {
-        this.messageOptions.forEach(n => this.messageTypes.push(n.value))
+        if (Array.isArray(query.types)) query.types.forEach(n => this.messageTypes.push(n))
+        else this.messageTypes.push(query.types)
       }
-      if (query.isSponsor != null) {
-        this.isSponsor = query.isSponsor.toLowerCase() === "true" ? "true" : "false";
-      }
-      if (query.isVerified != null) {
-        this.isVerified = query.isVerified.toLowerCase() === "true" ? "true" : "false";
-      }
-      // if (query.isOwner !== 'ignore') this.isOwner = query.isOwner === "true";
+      else this.messageOptions.forEach(n => this.messageTypes.push(n.value))
+      if (query.isSponsor != null) this.isSponsor = query.isSponsor.toLowerCase() === "true" ? "true" : "false";
+      if (query.isVerified != null) this.isVerified = query.isVerified.toLowerCase() === "true" ? "true" : "false";
 
-      // console.log(this.messageTypes)
       nextTick(this.updateFilters)
     },
 
@@ -281,8 +234,4 @@ export default defineComponent({
 <style lang="sass">
 .expand-header
   background: $grey-9
-  //margin-left: 10px
-
-//.user-type-toggle
-//  toggle-color:
 </style>

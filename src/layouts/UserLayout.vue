@@ -5,13 +5,13 @@
       <q-toolbar>
         <q-btn dense flat round icon="search" @click="toggleSearch"/>
         <q-toolbar-title>
-          <author-header v-bind="author" v-if="$route.params.channelID"/>
+          <author-header v-bind="author"/>
         </q-toolbar-title>
         <q-btn-dropdown icon="fas fa-lock" label="apikey">
           <api-key-input/>
         </q-btn-dropdown>
       </q-toolbar>
-      <q-toolbar v-if="$route.params.channelID">
+      <q-toolbar>
         <q-btn label="ban" icon="fas fa-skull" dense><q-tooltip>not implemented for obvious reasons</q-tooltip></q-btn>
         <q-tabs
           v-model="tab"
@@ -30,21 +30,17 @@
           <q-card-section>
             <q-icon name="fas fa-skull"/>
             User is (probably) banned!!
-<!--            <q-btn size="sm" label="Unban"><q-tooltip>not implemented lol</q-tooltip></q-btn>-->
           </q-card-section>
         </q-card>
       </q-toolbar>
     </q-header>
-    <router-view v-if="$route.params.channelID" :channelID="$route.params.channelID" style="padding-top: 100px"/>
-    <q-drawer v-model="drawerLeft" side="left" :width="500" :persistent="false">
+    <router-view style="padding-top: 100px"/>
+    <q-drawer bordered elevated v-model="drawerLeft" side="left" :width="500">
       <better-user-search style="max-height: 100%" ref="authorSearch"/>
     </q-drawer>
-<!--    <q-page-container>-->
-<!--      <q-page style="display: flex; margin: 0; padding: 0;">-->
-<!--      </q-page>-->
-<!--    </q-page-container>-->
   </q-layout>
 </template>
+
 <script>
 import {ref} from 'vue'
 import {api} from "boot/axios";
@@ -57,86 +53,48 @@ import ApiKeyDialog from "layouts/ApiKeyDialog";
 
 export default {
   components: {ApiKeyInput, BetterUserSearch, AuthorHeader, ApiKeyDialog},
+  watch: {
+    "$route.params.channelID"() {
+      this.drawerLeft = false;
+      this.fetchAuthor();
+    }
+  },
   methods: {
     toggleSearch() {
       this.drawerLeft = !this.drawerLeft
       this.$refs.authorSearch.focusInput()
     },
-    authError() {
-      console.log('received auth error emit')
-      this.$refs.apiKeyDialog.show();
+    fetchAuthor() {
+      const url = `/channel/${this.$route.params.channelID}?key=${this.$store.state.apikey.apikey}`
+      api.get(url).then((data) => {
+        this.author = data.data
+        this.title = `${this.author.name} - ytchat user`
+      }).catch((reason) => {
+        console.log(`error when trying to query author info: ${reason}`);
+        if (reason?.response?.status === 401) this.$refs.apiKeyDialog.show();
+      })
     },
   },
   setup() {
-    // page title will always reflect value of this
-    const title = ref('ytchat')
-    useMeta(() => {
-      return {
-        title: title.value
-      }
-    })
-
-    const channelUrl = ref("")
-    const imageUrl = ref("")
-    const author = ref(null)
+    const title = ref('ytchat user') // page title will always reflect value of this
+    useMeta(() => {return {title: title.value}})
     return {
+      title,
       tab: ref('messages'),
       name: ref("no user"),
-      channelUrl,
-      imageUrl,
-      title,
+      channelUrl: ref(""),
+      imageUrl: ref(""),
       drawerLeft: ref(false),
-      author,
-      fetchAuthor() {
-        const url = `/channel/${this.channelID}?key=${this.$store.state.apikey.apikey}`
-        // console.log(`querying url: ${url}`)
-        api.get(url).then((data) => {
-          this.author = data.data
-          this.title = `${author.value.name} - ytchat`
-        }).catch((reason) => {
-          console.log(`error when trying to query author info: ${reason}`);
-          if (reason.response.status === 401) {
-            this.authError()
-          }
-        })
-      },
+      author: ref(null),
     }
   },
   created() {
-    // console.log("layout create")
     if (this.$store.state.apikey.apikey.length === 0) {
       const localKey = localStorage.getItem('apikey')
-      if (localKey) {
-        this.$store.commit('apikey/setApikey', localKey)
-      } else {
-        console.log("api key was empty on load")
-      }
+      if (localKey) this.$store.commit('apikey/setApikey', localKey)
+      else console.log("api key was empty on load")
     }
   },
-  updated() {
-    // console.log("layout updated")
-    if (this.$route.params.channelID !== this.channelID) {
-      console.log("channelID changed, updating details")
-      this.channelID = this.$route.params.channelID
-      this.fetchAuthor()
-    }
-  },
-  mounted() {
-    // console.log("layout mounted")
-    this.channelID = this.$route.params.channelID;
-    // this.$refs.history.newFilters({filters: {'author.channelId': this.channelID}, sort: {timestamp: -1}})
-    this.fetchAuthor()
-  }
+  mounted() {this.fetchAuthor()}
 }
 </script>
-
-<style lang="sass">
-.author-title
-  padding: 0 10px
-  font-size: larger
-
-//.main-layout
-//  color: #efeff1
-//  background: #1d1d1d
-
-</style>
