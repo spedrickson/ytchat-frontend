@@ -12,12 +12,12 @@ The backend URL needs to be set as an environment variable before starting:
 
 ```bash
 # bash
-YTCHAT_CHANNELID=...
+YTCHAT_FRONTEND_API_URL=...
 ```
 
 ```bash
 # powershell
-$env:YTCHAT_CHANNELID = "..."
+$env:YTCHAT_FRONTEND_API_URL = "..."
 ```
 
 
