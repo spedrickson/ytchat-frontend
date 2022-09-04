@@ -101,7 +101,7 @@ export default defineComponent({
       }).catch(reason => {
         console.log(`error when trying to query filtered messages info: ${reason}`);
         if (reason?.response?.status === 401) this.$emit('auth-error')
-      }).finally(_ => this.loading = false);
+      }).finally(() => this.loading = false);
     },
 
     fetchOlderMessages() {
