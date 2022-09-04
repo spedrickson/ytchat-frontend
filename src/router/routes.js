@@ -3,6 +3,7 @@ import FilterLayout from "layouts/FilterLayout";
 import MessageHistory from "components/MessageHistory";
 import ModComments from "components/ModComments";
 import UnbanLayout from "layouts/UnbanLayout";
+import FilteredHistory from "components/FilteredHistory";
 const routes = [
   {
     name: "channel view",
@@ -22,7 +23,7 @@ const routes = [
     },]
   },{
     path: "/filtered",
-    component: FilterLayout
+    component: FilterLayout,
   },{
     name: "Unban Form",
     path: "/unban",
