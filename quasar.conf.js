@@ -47,6 +47,12 @@ module.exports = configure(function (ctx) {
       // transpile: false,
       // publicPath: '/',
 
+      env: {
+        YTCHAT_FRONTEND_API_URL: process.env.YTCHAT_FRONTEND_API_URL ?
+          process.env.YTCHAT_FRONTEND_API_URL :
+          "https://ytchat-api.ngrok.io/api"
+      },
+
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).
       // Applies only if "transpile" is set to true.
