@@ -1,10 +1,5 @@
 import {route} from "quasar/wrappers";
-import {
-  createMemoryHistory,
-  createRouter,
-  createWebHashHistory,
-  createWebHistory,
-} from "vue-router";
+import {createMemoryHistory, createRouter, createWebHashHistory, createWebHistory,} from "vue-router";
 import routes from "./routes";
 
 /*
@@ -23,7 +18,7 @@ export default route(function (/* { store, ssrContext } */) {
       ? createWebHistory
       : createWebHashHistory;
 
-  const router = createRouter({
+  return createRouter({
     scrollBehavior: () => ({left: 0, top: 0}),
     routes,
 
@@ -34,26 +29,4 @@ export default route(function (/* { store, ssrContext } */) {
       process.env.MODE === "ssr" ? void 0 : process.env.VUE_ROUTER_BASE
     ),
   });
-
-  router.afterEach(to => {
-    if (to.meta.title) {
-      document.title = `${to.meta.title} - my blog`;
-    }
-  });
-
-  // router.beforeEach(async (to, from) => {
-  //   if (to.meta.requiresAuth) {
-  //   } else {
-  //     return { name: "error" };
-  //   }
-  //   // if (
-  //   //   // make sure the user is authenticated
-  //   //   !isAuthenticated &&
-  //   //   // ❗️ Avoid an infinite redirect
-  //   //   to.name !== "Login"
-  //   // ) {
-  //   //   // redirect the user to the login page
-  //   // }
-  // });
-  return router;
 });

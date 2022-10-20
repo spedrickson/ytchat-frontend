@@ -2,6 +2,8 @@ import UserLayout from "layouts/UserLayout";
 import FilterLayout from "layouts/FilterLayout";
 import MessageHistory from "components/MessageHistory";
 import ModComments from "components/ModComments";
+import SentimentLayout from "layouts/SentimentLayout";
+import RandomLayout from "layouts/RandomLayout"
 
 const routes = [
   {
@@ -23,6 +25,12 @@ const routes = [
   },{
     path: "/filtered",
     component: FilterLayout,
+  },{
+    path: "/sentiment",
+    component: SentimentLayout,
+  },{
+    path: "/randommessage",
+    component: RandomLayout,
   },
 
   // Always leave this as last one,
