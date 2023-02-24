@@ -68,7 +68,7 @@ export default defineComponent({
     },
 
     newFilters(filters) {
-      console.log('received new filters')
+      // console.log('received new filters')
       this.filters = filters;
       this.reachedBeginning = false;
       this.messages.length = 0; // why is this the way to clear a list javascript...
@@ -93,7 +93,7 @@ export default defineComponent({
         if (this.messages.length === 0 && data.data.length < API_LIMIT)
           this.reachedBeginning = true;
         if (data.data.length > 0) {
-          console.log(`received some data: ${data.data.length}`)
+          // console.log(`received some data: ${data.data.length}`)
           this.messages = this.messages.concat(data.data.reverse());
           this.trimMessages();
           if (this.autoScroll) this.scrollToBottom()
@@ -107,7 +107,7 @@ export default defineComponent({
     fetchOlderMessages() {
       if (this.loading) return
       if (this.reachedBeginning) return
-      console.log('fetching older messages')
+      // console.log('fetching older messages')
       this.loading = true
       const url = `/messages?key=${this.apikey()}`
       const filters = this.filters
@@ -115,7 +115,7 @@ export default defineComponent({
       api.post(url, this.filters).then((data) => {
         if (data.data.length < API_LIMIT) this.reachedBeginning = true;
         if (data.data.length) {
-          console.log(`received some data: ${data.data.length}`)
+          // console.log(`received some data: ${data.data.length}`)
           this.messages = data.data.reverse().concat(this.messages)
           nextTick(() => this.$refs.virtualListRef.scrollTo(data.data.length - 1, 'start-force'))
         }

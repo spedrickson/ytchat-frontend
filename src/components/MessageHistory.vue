@@ -13,7 +13,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    console.log("history mounted")
     this.$refs.history.newFilters({filters: {'author.channelId': this.$route.params.channelID}, sort: {timestamp: -1}})
   },
 });
