@@ -49,10 +49,9 @@ import MessageContext from "components/MessageContext"
 import ApiKeyInput from "components/ApiKeyInput";
 import {useMeta} from "quasar";
 import BetterUserSearch from "components/BetterUserSearch";
-import ApiKeyDialog from "layouts/ApiKeyDialog";
 
 export default {
-  components: {ApiKeyInput, BetterUserSearch, AuthorHeader, ApiKeyDialog},
+  components: {ApiKeyInput, BetterUserSearch, AuthorHeader},
   watch: {
     "$route.params.channelID"() {
       this.drawerLeft = false;
@@ -86,13 +85,6 @@ export default {
       imageUrl: ref(""),
       drawerLeft: ref(false),
       author: ref(null),
-    }
-  },
-  created() {
-    if (this.$store.state.apikey.apikey.length === 0) {
-      const localKey = localStorage.getItem('apikey')
-      if (localKey) this.$store.commit('apikey/setApikey', localKey)
-      else console.log("api key was empty on load")
     }
   },
   mounted() {this.fetchAuthor()}

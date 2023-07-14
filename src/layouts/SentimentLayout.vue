@@ -5,9 +5,7 @@
       <q-toolbar>
         <q-btn dense flat round icon="fas fa-theater-masks" @click="this.leftDrawerOpen = !this.leftDrawerOpen"/>
         <q-toolbar-title>ytchat sentiment</q-toolbar-title>
-        <q-btn-dropdown icon="fas fa-lock" label="apikey">
-          <api-key-input/>
-        </q-btn-dropdown>
+        <api-key-input/>
       </q-toolbar>
     </q-header>
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered class="overflow-hidden">
@@ -48,7 +46,7 @@
     </q-drawer>
 
     <q-page-container >
-      <q-banner v-if="!timer" dense>
+      <q-banner class="bg-red" v-if="!timer" dense>
         <template v-slot:avatar>
           <q-icon name="signal_wifi_off" color="primary" />
         </template>
@@ -81,13 +79,6 @@ export default defineComponent({
     draggable
   },
   setup() {return { leftDrawerOpen: ref(false)}},
-  created() {
-    if (this.$store.state.apikey.apikey.length === 0) {
-      const localKey = localStorage.getItem('apikey')
-      if (localKey) this.$store.commit('apikey/setApikey', localKey)
-      else console.log("api key was empty on load")
-    }
-  },
 
   data() {
     return {
@@ -144,6 +135,7 @@ export default defineComponent({
         if (!data.data) {
           return
         }
+        // console.log(data.data)
         this.lastResponse = data.data
         this.setChartData()
       }).catch((reason) => {
@@ -160,11 +152,18 @@ export default defineComponent({
     },
 
     setChartData() {
+      const totalVotes = Object.values(this.lastResponse).reduce((partialSum, a) => partialSum + parseInt(a), 0)
       // console.log('setting chart data')
+      // console.log(`total votes: ${totalVotes}`)
       const sortedValues = []
+      const sortedLabels = []
       for (const item of this.messageStrings) {
-        sortedValues.push(this.lastResponse[item])
+        const votes = parseFloat(this.lastResponse[item.toLowerCase()])
+        const percent = (votes / totalVotes) * 100
+        sortedValues.push(this.lastResponse[item.toLowerCase()])
+        sortedLabels.push(`${item} - ${votes} - ${percent.toFixed(1)}%`)
       }
+      this.$refs.barChart.chartData.labels = sortedLabels
       this.$refs.barChart.chartData.datasets[0].data = sortedValues
     },
 

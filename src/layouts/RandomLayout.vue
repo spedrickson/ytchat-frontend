@@ -3,14 +3,12 @@
     <api-key-dialog ref="apiKeyDialog"/>
     <q-header elevated height-hint="98">
       <q-toolbar>
-        <q-btn dense flat round icon="fas fa-theater-masks" @click="this.leftDrawerOpen = !this.leftDrawerOpen"/>
-        <q-toolbar-title>ytchat sentiment</q-toolbar-title>
-        <q-btn-dropdown icon="fas fa-lock" label="apikey">
-          <api-key-input/>
-        </q-btn-dropdown>
+        <q-btn dense flat round icon="fas fa-dice" @click="drawerOpen = !drawerOpen"/>
+        <q-toolbar-title>random message</q-toolbar-title>
+        <api-key-input/>
       </q-toolbar>
     </q-header>
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered class="overflow-hidden">
+    <q-drawer v-model="drawerOpen" persistent ref="drawer" side="left" bordered class="overflow-hidden">
       <div class="q-pa-md">
         <div class="row">
           <q-input dense debounce="500" standout class="col-4 q-pa-xs" v-model.number="delaySeconds" type="number"/>
@@ -28,19 +26,19 @@
         </div>
 
         <div class="row">
-          <q-input dense class="col-12 q-pa-xs" v-model="messageString" standout/>
+          <q-input dense class="col-12 q-pa-xs" v-model="searchTerm" standout label="messages starting with..." label-color="grey-7"/>
         </div>
 
         <div>
-          <q-btn @click="fetchMessages">
-            New Random Question
+          <q-btn @click="fetchMessages" :loading="loading">
+            New Random Message
           </q-btn>
         </div>
       </div>
     </q-drawer>
 
     <q-page-container >
-      <message v-if="message" :message="message" ></message>
+      <message v-if="messageObj" :message="messageObj"/>
     </q-page-container>
   </q-layout>
 </template>
@@ -59,13 +57,8 @@ export default defineComponent({
     Message, ApiKeyDialog,
     ApiKeyInput
   },
-  setup() {return { leftDrawerOpen: ref(false)}},
-  created() {
-    if (this.$store.state.apikey.apikey.length === 0) {
-      const localKey = localStorage.getItem('apikey')
-      if (localKey) this.$store.commit('apikey/setApikey', localKey)
-      else console.log("api key was empty on load")
-    }
+  setup() {return {
+    leftDrawerOpen: ref(false)}
   },
 
   data() {
@@ -73,38 +66,35 @@ export default defineComponent({
       drag: false,
       delaySeconds: 30,
       val: null,
-      messageString: "",
       lastResponse: {},
-      loaded: false,
       chartData: {},
-      message: null,
+      messageObj: null,
+      searchTerm: "",
+      drawerOpen: true,
+      loading: false,
     };
   },
 
-
   methods: {
-
+    setFiltersFromUrl() {
+      if (this.$route.query.message) {
+        this.searchTerm = this.$route.query.message
+      }
+    },
     fetchMessages() {
       if (this.loading) return
       this.loading = true
-      const url = `/messages?key=${this.apikey()}`
-      const filters = {
-        filters: {
-          message: {$regex: `^${this.messageString}`},
-          timestamp: {
-            $gt: (new Date().getTime() - (this.delaySeconds * 1000))
-          }
-        },
-        sort: {timestamp: -1}
-      };
+      const url = `/randommessage?key=${this.apikey()}`
 
-      api.post(url, filters).then((data) => {
-        console.log(`received some data: ${data.data.length}`)
+      const body = {
+        filter: `^${this.searchTerm}`,
+        timestamp: new Date().getTime() - (this.delaySeconds * 1000)
+      }
+
+      api.post(url, body).then((data) => {
+        // console.log(`received some data: ${data.data.length}`)
         if (data.data.length > 0) {
-          this.message = data.data[Math.floor(Math.random() * data.data.length)]
-          // this.messages = this.messages.concat(data.data.reverse());
-          // this.trimMessages();
-          // if (this.autoScroll) this.scrollToBottom()
+          this.messageObj = data.data[0]
         }
       }).catch(reason => {
         console.log(`error when trying to query filtered messages info: ${reason}`);
@@ -116,7 +106,8 @@ export default defineComponent({
   },
 
   mounted() {
-    this.loaded = false
+    this.setFiltersFromUrl()
+    this.$refs.drawer.show()
   },
 })
 </script>

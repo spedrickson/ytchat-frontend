@@ -1,17 +1,18 @@
 <template>
-  <q-layout class="main-layout" view="hHh Lpr lff" style="display: flex">
-    <api-key-dialog ref="apiKeyDialog"/>
+  <q-layout class="main-layout" view="hHh lpR fFf" style="display: flex">
     <q-header elevated height-hint="98">
       <q-toolbar>
         <q-btn dense flat round icon="fas fa-filter" @click="this.drawerLeft = !this.drawerLeft"/>
         <q-toolbar-title>filtered ytchat</q-toolbar-title>
-        <q-btn-dropdown icon="fas fa-lock" label="apikey">
-          <api-key-input/>
-        </q-btn-dropdown>
+        <api-key-input/>
       </q-toolbar>
     </q-header>
-    <filtered-history class="full-width" :filters="filters" ref="history" @auth-error="authError" style="min-height: 400px"/>
-    <q-drawer v-model="drawerLeft" side="left" :persistent="false" class="column q-pa-sm">
+    <q-drawer :width="200"
+              :breakpoint="500"
+              show-if-above
+              v-model="drawerLeft"
+              side="left"
+              :persistent="false">
       <q-expansion-item header-class="expand-header" class="col-auto" v-model="usersExpanded" dense dense-toggle label="Users"  icon="person_search">
         <q-btn no-wrap no-caps color="primary" icon="fas fa-user-plus" label="Add users to filter" style="width: 100%;">
           <q-menu anchor="top right" self="top left">
@@ -45,10 +46,19 @@
                       :options="[{label: 'Any of these types', value: 'include'},{label: 'None of these types', value: 'exclude'}]"/>
         <q-option-group v-model="userTypes" :options="userTypeOptions" type="checkbox" @update:model-value="modified"/>
       </q-expansion-item>
+      <q-input
+        filled
+        ref="messageInput"
+        label="Message text (regex)"
+        :rules="[ validMessageRegex ]"
+        v-model="messageRegex"/>
       <q-page-sticky v-show="filtersModified" position="bottom-right" :offset="[10, 10]">
         <q-btn fab @click="setUrlFromFilters" color="positive" label="Apply" icon="refresh"/>
       </q-page-sticky>
     </q-drawer>
+    <q-page-container style="flex-grow: 1; display: flex; ">
+      <filtered-history class="row history-box" :filters="filters" ref="history" @auth-error="authError"/>
+    </q-page-container>
   </q-layout>
 </template>
 <script>
@@ -56,13 +66,12 @@ import {defineComponent, nextTick, ref} from 'vue'
 import FilteredHistory from "components/FilteredHistory";
 import ApiKeyInput from "components/ApiKeyInput";
 import RangePicker from "components/RangePicker";
-import ApiKeyDialog from "layouts/ApiKeyDialog";
 import BetterUserSearch from "components/BetterUserSearch";
 import Author from "components/Author";
 
 export default defineComponent({
   name: "FilterLayout",
-  components: {Author, BetterUserSearch, ApiKeyDialog, RangePicker, ApiKeyInput, FilteredHistory},
+  components: {Author, BetterUserSearch, RangePicker, ApiKeyInput, FilteredHistory},
   data() {
     return {
       filters: {},
@@ -91,7 +100,7 @@ export default defineComponent({
       userFilterType: ref('include'),
       userTypeFilterType: ref('include'),
       userTypesExpanded: ref(true),
-      messageTypesExpanded: ref(true),
+      messageTypesExpanded: ref(false),
       datesExpanded: ref(false),
       usersExpanded: ref(true),
       isSponsor: ref('ignore'),
@@ -102,6 +111,7 @@ export default defineComponent({
       apikeyDialog: ref(false),
       rangePicker: ref(null),
       messageTypes: ref([]),
+      messageRegex: ref(''),
       userTypes: ref([]),
       users: ref(new Map()),
       drawerLeft: ref(true),
@@ -120,13 +130,6 @@ export default defineComponent({
     }
   },
   mounted() {this.setFiltersFromUrl()},
-  created() {
-    if (this.$store.state.apikey.apikey.length === 0) {
-      const localKey = localStorage.getItem('apikey')
-      if (localKey) this.$store.commit('apikey/setApikey', localKey)
-      else console.log("api key was empty on load")
-    }
-  },
   methods: {
     setUrlFromFilters() {
       console.log("getting URL from filters")
@@ -138,7 +141,7 @@ export default defineComponent({
       }
       const queryFilters = this.renameQueryFilters(filters)
       if (this.users.size) {
-        console.log('mannually adding users')
+        console.log('manually adding users')
         queryFilters['cid'] = Array.from(this.users.keys())
       }
       if (this.userFilterType !== "include")  queryFilters['ufType'] = 'ex'
@@ -175,6 +178,7 @@ export default defineComponent({
       // console.log('modified')
       this.filtersModified = true;
       this.updateCaptions();
+      this.$refs.messageInput.resetValidation()
     },
     addAuthor(author) {
       this.users.set(author.channelId, author)
@@ -184,12 +188,18 @@ export default defineComponent({
       this.users.delete(channelId)
       this.modified()
     },
-    authError() {this.$refs.apiKeyDialog.show()},
+    // authError() {this.$refs.apiKeyDialog.show()},
     updateCaptions() {
       if (this.messageTypesExpanded) this.typesCaption = ''
       else if (this.messageTypes.length === this.messageOptions.length) this.typesCaption = 'all'
-      else if (this.messageTypes.length === 0) this.typesCaption = "you have to select at least one type..."
+      else if (this.messageTypes.length === 0) this.typesCaption = "select at least one msg type"
       else this.typesCaption = this.messageTypes.join(', ')
+    },
+    validMessageRegex() {
+      if (this.messageRegex.length === 0) return true
+      if (this.rangePicker?.getAfterTimestamp() || this.rangePicker?.getBeforeTimestamp())
+        return true
+      return "please set date range to use message regex (performance reasons)"
     },
     getFilters() {
       const result = {filters: {}, sort: {timestamp: -1}};
@@ -220,6 +230,9 @@ export default defineComponent({
       if (this.messageTypes.length && this.messageTypes.length !== this.messageOptions.length) {
         result.filters.type = {"$in": this.messageTypes};
       }
+      if (this.messageRegex.length && this.validMessageRegex()) {
+        result.filters.message = {"$regex": this.messageRegex}
+      }
       return result
     },
     updateFilters() {
@@ -230,8 +243,6 @@ export default defineComponent({
       this.$refs?.history?.newFilters(this.filters);
       this.updateCaptions();
     },
-
-
   },
 })
 </script>
@@ -239,4 +250,9 @@ export default defineComponent({
 <style lang="sass">
 .expand-header
   background: $grey-9
+
+.history-box
+  flex-grow: 1
+  min-height: 400px
+  min-width: 400px
 </style>
