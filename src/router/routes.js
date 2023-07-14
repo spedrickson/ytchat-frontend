@@ -4,8 +4,19 @@ import MessageHistory from "components/MessageHistory";
 import ModComments from "components/ModComments";
 import SentimentLayout from "layouts/SentimentLayout";
 import RandomLayout from "layouts/RandomLayout"
+import IndexLayout from "layouts/IndexLayout"
 
 const routes = [
+  {
+
+    path: "/",
+    redirect: '/index',
+  },
+  {
+    path: '/index',
+    name: 'index',
+    component: IndexLayout
+  },
   {
     name: "channel view",
     path: "/user",
