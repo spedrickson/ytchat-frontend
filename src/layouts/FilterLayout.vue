@@ -57,7 +57,7 @@
       </q-page-sticky>
     </q-drawer>
     <q-page-container style="flex-grow: 1; display: flex; ">
-      <filtered-history class="row history-box" :filters="filters" ref="history" @auth-error="authError"/>
+      <filtered-history class="row history-box" :filters="filters" ref="history"/>
     </q-page-container>
   </q-layout>
 </template>

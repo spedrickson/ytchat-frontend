@@ -1,6 +1,5 @@
 <template>
   <q-layout class="main-layout" view="hHh Lpr lff" style="display: flex">
-    <api-key-dialog ref="apiKeyDialog"/>
     <q-header elevated>
       <q-toolbar>
         <q-btn dense flat round icon="search" @click="toggleSearch"/>
