@@ -23,7 +23,7 @@
     "jsonwebtoken": "^9.0.0",
     "quasar": "^2.12.0",
     "vue": "^3.0.0",
-    "vue-chartjs": "^5.2.0",
+    "vue-chartjs": "4",
     "vue-router": "^4.0.0",
     "vuedraggable": "^4.1.0",
     "vuex": "^4.0.1",
