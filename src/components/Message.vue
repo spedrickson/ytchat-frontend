@@ -9,7 +9,7 @@
       </div>
     </q-td>
     <q-td >
-      <author :author="message.author" style="white-space: nowrap" @clicked="authorClicked"/>
+      <author-component :author="message.author" style="white-space: nowrap" @clicked="authorClicked"/>
     </q-td>
     <q-td>
       <q-chip  :ripple="false" v-if="message.amountValue" style="padding:0 0; margin: 0 0">
@@ -26,14 +26,14 @@
 
 <script>
 import {defineComponent} from "vue";
-import Author from "components/Author";
+import AuthorComponent from "components/Author";
 import MessageContent from "components/MessageContent";
 import MessageContext from "components/MessageContext";
 import {date} from "quasar";
 
 export default defineComponent({
-  name: 'Message',
-  components: {MessageContent, Author},
+  name: 'MessageComponent',
+  components: {MessageContent, AuthorComponent},
   setup() {
     // const {dateString} = DateFunc.useDateString()
     return {

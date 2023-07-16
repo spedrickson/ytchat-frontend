@@ -25,7 +25,7 @@
         <q-list>
           <q-item v-for="[channelId, author] in users" :key="channelId">
             <q-chip removable @remove="removeAuthor(channelId)">
-              <author :author="author"/>
+              <author-component :author="author"/>
             </q-chip>
           </q-item>
         </q-list>
@@ -67,11 +67,11 @@ import FilteredHistory from "components/FilteredHistory";
 import ApiKeyInput from "components/ApiKeyInput";
 import RangePicker from "components/RangePicker";
 import BetterUserSearch from "components/BetterUserSearch";
-import Author from "components/Author";
+import AuthorComponent from "components/Author";
 
 export default defineComponent({
   name: "FilterLayout",
-  components: {Author, BetterUserSearch, RangePicker, ApiKeyInput, FilteredHistory},
+  components: {AuthorComponent, BetterUserSearch, RangePicker, ApiKeyInput, FilteredHistory},
   data() {
     return {
       filters: {},

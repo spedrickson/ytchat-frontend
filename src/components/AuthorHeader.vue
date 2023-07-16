@@ -21,12 +21,11 @@
 
 <script>
 import {defineComponent} from "vue";
-import Author from "components/Author";
+import AuthorComponent from "components/Author";
 import {ref} from "vue";
 
 export default defineComponent({
   name: "AuthorHeader",
-  // components: {Author},
   props: {
     name: {default: null},
     channelUrl: {default: null},

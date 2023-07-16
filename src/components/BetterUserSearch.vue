@@ -20,7 +20,7 @@
           </q-td>
         </template>
         <template v-slot:body-cell-author="row">
-          <q-td><author :author="row.row.obj" @clicked="authorSelected" :no-nav="noNav"/></q-td>
+          <q-td><author-component :author="row.row.obj" @clicked="authorSelected" :no-nav="noNav"/></q-td>
         </template>
       </q-table>
     </q-card-section>
@@ -30,12 +30,12 @@
 <script>
 import {defineComponent, ref} from "vue";
 import {api} from "boot/axios";
-import Author from "components/Author";
+import AuthorComponent from "components/Author";
 import * as DateFunc from "../assets/js/DateFunc"
 
 export default defineComponent({
   name: "BetterUserSearch",
-  components: {Author},
+  components: {AuthorComponent},
   methods: {
     authorSelected(author) {
       // console.log(author)

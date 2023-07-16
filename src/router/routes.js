@@ -8,7 +8,6 @@ import IndexLayout from "layouts/IndexLayout"
 
 const routes = [
   {
-
     path: "/",
     redirect: '/index',
   },

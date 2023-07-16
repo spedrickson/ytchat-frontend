@@ -22,10 +22,9 @@
 
 <script>
 import { defineComponent } from "vue";
-import {useRouter} from "vue-router";
 
 export default defineComponent({
-  name: "Error404",
+  name: "Error404Component",
 
   mounted() {
     if (this.$store.state.apikey.apikey.length === 0) {

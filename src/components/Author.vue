@@ -41,7 +41,7 @@ import {defineComponent} from "vue";
 const nameMaxLen = 25
 
 export default defineComponent({
-    name: "Author",
+    name: "AuthorComponent",
     emits: ['clicked'],
     props: {
       // name: {default: null},
