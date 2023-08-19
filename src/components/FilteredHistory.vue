@@ -12,10 +12,12 @@
           </q-item>
         </template>
       </q-virtual-scroll>
-      <q-btn v-intersection="intersectBottom" no-caps dense outline rounded color="positive" @click="toggleAutoLoad" style="margin-left: 15px">
-          <span v-if="autoLoadId"><q-spinner-bars/><q-spinner-bars/><q-spinner-bars/><q-spinner-bars/></span>
-          <span v-else>auto load new messages</span>
-      </q-btn>
+      <div ref="autoloadButton">
+        <q-btn v-intersection="intersectBottom" no-caps dense outline rounded color="positive" @click="toggleAutoLoad" style="margin-left: 15px">
+            <span v-if="autoLoadId"><q-spinner-bars/><q-spinner-bars/><q-spinner-bars/><q-spinner-bars/></span>
+            <span v-else>auto load new messages</span>
+        </q-btn>
+      </div>
       <div class="text-center" v-if="messages.length === 0">
         <h2>No messages :(</h2>
       </div>
@@ -37,7 +39,7 @@ const API_LIMIT = 100;
 export default defineComponent({
   name: "MessageHistory",
   components: {Message},
-  emits: ['auth-error', 'autoscroll-disabled', 'autoscroll-enabled'],
+  emits: ['autoscroll-disabled', 'autoscroll-enabled'],
 
   setup() {
     return {
@@ -62,9 +64,13 @@ export default defineComponent({
     },
 
     scrollToBottom(attempt = 0) {
-      this.$refs.scrollTarget.setScrollPercentage('vertical', 1.0)
-      if (attempt > 30) return
-      if (this.$refs.scrollTarget.getScrollPercentage().top < 0.98) setTimeout(_ => this.scrollToBottom(attempt + 1), 100)
+      // this.$refs.scrollTarget.setScrollPercentage('vertical', 1.0)
+      // if (attempt > 30) return
+      // if (this.$refs.scrollTarget.getScrollPercentage().top < 0.98) setTimeout(_ => this.scrollToBottom(attempt + 1), 100)
+      const el = this.$refs.autoloadButton
+      if (el) {
+        el.scrollIntoView()
+      }
     },
 
     newFilters(filters) {
@@ -96,11 +102,11 @@ export default defineComponent({
           // console.log(`received some data: ${data.data.length}`)
           this.messages = this.messages.concat(data.data.reverse());
           this.trimMessages();
-          if (this.autoScroll) this.scrollToBottom()
+          if (this.autoScroll) this.$nextTick(this.scrollToBottom)
         }
       }).catch(reason => {
         console.log(`error when trying to query filtered messages info: ${reason}`);
-        if (reason?.response?.status === 401) this.$emit('auth-error')
+        if (reason?.response?.status === 401) this.$refs.apiKeyInput.show()
       }).finally(() => this.loading = false);
     },
 
@@ -121,7 +127,7 @@ export default defineComponent({
         }
       }).catch(reason => {
         console.error(`error when trying to query filtered messages info: ${reason}`);
-        if (reason?.response?.status === 401) this.$emit('auth-error')
+        if (reason?.response?.status === 401) this.$refs.apiKeyInput.show()
       }).finally(() => this.loading = false);
     },
 

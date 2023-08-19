@@ -1,4 +1,4 @@
-<template><filtered-history ref="history" class="column col-grow"  @auth-error="$emit('auth-error')"/></template>
+<template><filtered-history ref="history" class="column col-grow"/></template>
 
 <script>
 import {defineComponent} from "vue";

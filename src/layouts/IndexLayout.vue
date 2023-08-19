@@ -1,12 +1,11 @@
 <template>
   <q-layout class="main-layout" view="hHh lpR fFf" style="display: flex">
-    <api-key-dialog ref="apiKeyDialog"/>
     <q-header elevated height-hint="98">
       <q-toolbar>
         <q-btn dense flat round icon="search" @click="drawerLeft = !drawerLeft"/>
         <q-separator dark vertical inset />
         <q-toolbar-title>ytchat-index</q-toolbar-title>
-        <api-key-input/>
+        <api-key-input ref="apiKeyInput"/>
       </q-toolbar>
     </q-header>
     <q-drawer :width="400"
@@ -41,13 +40,12 @@
 <script>
   import ApiKeyInput from "components/ApiKeyInput.vue";
   import BetterUserSearch from "components/BetterUserSearch.vue";
-  import ApiKeyDialog from "layouts/ApiKeyDialog.vue";
   import {defineComponent, ref} from "vue";
   const test = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
   export default defineComponent({
     name: "IndexLayout",
-    components: {ApiKeyInput, BetterUserSearch, ApiKeyDialog},
+    components: {ApiKeyInput, BetterUserSearch},
     setup() {
       return {
         drawerLeft: ref(true)

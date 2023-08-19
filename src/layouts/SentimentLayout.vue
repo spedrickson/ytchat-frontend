@@ -1,11 +1,10 @@
 <template>
   <q-layout class="main-layout" view="hHh LpR fFf">
-    <api-key-dialog ref="apiKeyDialog"/>
     <q-header elevated height-hint="98">
       <q-toolbar>
         <q-btn dense flat round icon="fas fa-theater-masks" @click="this.leftDrawerOpen = !this.leftDrawerOpen"/>
         <q-toolbar-title>ytchat sentiment</q-toolbar-title>
-        <api-key-input/>
+        <api-key-input ref="apiKeyInput"/>
       </q-toolbar>
     </q-header>
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered class="overflow-hidden">
@@ -65,7 +64,6 @@
 <script>
 import {defineComponent, ref} from 'vue'
 import ApiKeyInput from "components/ApiKeyInput";
-import ApiKeyDialog from "layouts/ApiKeyDialog";
 import BarChart from "../components/BarChart"
 import draggable from 'vuedraggable'
 
@@ -73,7 +71,7 @@ import {api} from "boot/axios";
 
 export default defineComponent({
   name: "SentimentLayout",
-  components: { ApiKeyDialog,
+  components: {
     ApiKeyInput,
     BarChart,
     draggable
@@ -141,7 +139,8 @@ export default defineComponent({
       }).catch((reason) => {
         clearInterval(this.timer)
         this.timer = false
-        console.log(`error when fetching: ${reason.message}`)
+        console.log(`error when fetching sentiment: ${reason.message}`)
+        if (reason?.response?.status === 401) this.$refs.apiKeyInput.show();
       })
     },
 

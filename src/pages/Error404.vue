@@ -25,12 +25,5 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Error404Component",
-
-  mounted() {
-    if (this.$store.state.apikey.apikey.length === 0) {
-      console.log("api key was empty on load")
-      // useRouter().push("/apikey")
-    }
-  }
 });
 </script>

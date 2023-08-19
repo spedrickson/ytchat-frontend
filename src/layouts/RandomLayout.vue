@@ -1,11 +1,10 @@
 <template>
   <q-layout class="main-layout" view="hHh LpR fFf">
-    <api-key-dialog ref="apiKeyDialog"/>
     <q-header elevated height-hint="98">
       <q-toolbar>
         <q-btn dense flat round icon="fas fa-dice" @click="drawerOpen = !drawerOpen"/>
         <q-toolbar-title>random message</q-toolbar-title>
-        <api-key-input/>
+        <api-key-input ref="apiKeyInput"/>
       </q-toolbar>
     </q-header>
     <q-drawer v-model="drawerOpen" persistent ref="drawer" side="left" bordered class="overflow-hidden">
@@ -46,7 +45,6 @@
 <script>
 import {defineComponent, ref} from 'vue'
 import ApiKeyInput from "components/ApiKeyInput";
-import ApiKeyDialog from "layouts/ApiKeyDialog";
 
 import {api} from "boot/axios";
 import Message from "components/Message";
@@ -54,8 +52,8 @@ import Message from "components/Message";
 export default defineComponent({
   name: "RandomLayout",
   components: {
-    Message, ApiKeyDialog,
-    ApiKeyInput
+    Message,
+    ApiKeyInput,
   },
   setup() {return {
     leftDrawerOpen: ref(false)}
@@ -92,13 +90,12 @@ export default defineComponent({
       }
 
       api.post(url, body).then((data) => {
-        // console.log(`received some data: ${data.data.length}`)
         if (data.data.length > 0) {
           this.messageObj = data.data[0]
         }
       }).catch(reason => {
-        console.log(`error when trying to query filtered messages info: ${reason}`);
-        if (reason?.response?.status === 401) this.$emit('auth-error')
+        console.log(`error when trying to query random messages: ${reason}`);
+        if (reason?.response?.status === 401) this.$refs.apiKeyInput.show()
       }).finally(() => this.loading = false);
     },
 

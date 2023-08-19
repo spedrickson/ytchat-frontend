@@ -6,9 +6,7 @@
         <q-toolbar-title>
           <author-header v-bind="author"/>
         </q-toolbar-title>
-        <q-btn-dropdown icon="fas fa-lock" label="apikey">
-          <api-key-input/>
-        </q-btn-dropdown>
+        <api-key-input ref="apiKeyInput"/>
       </q-toolbar>
       <q-toolbar>
         <q-btn label="ban" icon="fas fa-skull" dense><q-tooltip>not implemented for obvious reasons</q-tooltip></q-btn>
@@ -69,7 +67,7 @@ export default {
         this.title = `${this.author.name} - ytchat user`
       }).catch((reason) => {
         console.log(`error when trying to query author info: ${reason}`);
-        if (reason?.response?.status === 401) this.$refs.apiKeyDialog.show();
+        if (reason?.response?.status === 401) this.$refs.apiKeyInput.show();
       })
     },
   },
