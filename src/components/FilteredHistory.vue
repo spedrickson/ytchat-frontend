@@ -63,10 +63,7 @@ export default defineComponent({
       this.autoLoadId = 0;
     },
 
-    scrollToBottom(attempt = 0) {
-      // this.$refs.scrollTarget.setScrollPercentage('vertical', 1.0)
-      // if (attempt > 30) return
-      // if (this.$refs.scrollTarget.getScrollPercentage().top < 0.98) setTimeout(_ => this.scrollToBottom(attempt + 1), 100)
+    scrollToBottom() {
       const el = this.$refs.autoloadButton
       if (el) {
         el.scrollIntoView()
