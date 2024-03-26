@@ -17,7 +17,6 @@
     "chart.js": "^4.3.0",
     "chartjs-plugin-sort": "^0.1.1",
     "core-js": "^3.6.5",
-    "google-auth-library": "^8.9.0",
     "google-one-tap": "^1.0.3",
     "humanize-duration": "^3.27.1",
     "jsonwebtoken": "^9.0.0",
