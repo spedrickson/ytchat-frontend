@@ -1,26 +1,48 @@
 <template>
   <q-card>
     <q-card-section>
-      <q-input type="search" debounce="500" autogrow autofocus clearable dense label="search for user"
-               class="q-pa-sm" :model-value="searchTerm" @update:model-value="fetchUserBySearch"
-               @clear="clearUsers" ref="authorSearch" @keydown.enter.prevent/>
+      <q-input
+        type="search"
+        debounce="500"
+        autogrow
+        autofocus
+        clearable
+        dense
+        label="search for user"
+        class="q-pa-sm"
+        :model-value="searchTerm"
+        @update:model-value="fetchUserBySearch"
+        @clear="clearUsers"
+        ref="authorSearch"
+        @keydown.enter.prevent
+      />
     </q-card-section>
     <q-card-section>
-      <q-table :rows="users" :row-key="row => row.obj.channelId" :pagination="pagination"
-               :columns="columns" separator="none" dense v-show="this.users.length > 0">
-        <template v-slot:no-data>
-          no results :(
-        </template>
+      <q-table
+        :rows="users"
+        :row-key="(row) => row.channelId"
+        :pagination="pagination"
+        :columns="columns"
+        separator="none"
+        dense
+        v-show="this.users.length > 0"
+      >
+        <template v-slot:no-data> no results :( </template>
         <template v-slot:body-cell-avatar="row">
           <q-td>
-            <q-img :src="row.row.obj.imageUrl" height="24px" width="24px">
-              <template v-slot:error><q-icon name="fas fa-user"/></template>
+            <q-img :src="row.row.imageUrl" height="24px" width="24px">
+              <template v-slot:error><q-icon name="fas fa-user" /></template>
               <template v-slot:loading>LOADING</template>
             </q-img>
           </q-td>
         </template>
         <template v-slot:body-cell-author="row">
-          <q-td><author-component :author="row.row.obj" @clicked="authorSelected" :no-nav="noNav"/></q-td>
+          <q-td
+            ><author-component
+              :author="row.row"
+              @clicked="authorSelected"
+              :no-nav="noNav"
+          /></q-td>
         </template>
       </q-table>
     </q-card-section>
@@ -28,85 +50,91 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import {api} from "boot/axios";
+import { defineComponent, ref } from "vue";
+import { api } from "boot/axios";
 import AuthorComponent from "components/Author";
-import * as DateFunc from "../assets/js/DateFunc"
+import * as DateFunc from "../assets/js/DateFunc";
 
 export default defineComponent({
   name: "BetterUserSearch",
-  components: {AuthorComponent},
+  components: { AuthorComponent },
+  data() {
+    return {
+      searchTerm: "",
+    };
+  },
   methods: {
     authorSelected(author) {
       // console.log(author)
-      this.$emit('selected', author)
+      this.$emit("selected", author);
     },
     focusInput() {
-      this.$refs.authorSearch.focus()
+      this.$refs.authorSearch.focus();
     },
     clearUsers() {
-      this.users.splice(0, this.users.length) // empty array
+      this.users.splice(0, this.users.length); // empty array
     },
     fetchUserBySearch(searchTerm) {
-      this.clearUsers()
+      this.searchTerm = searchTerm;
+      this.clearUsers();
       if (searchTerm) {
-        const url = `search/channels/${searchTerm}?key=${this.$store.state.apikey.apikey}`;
+        const url = `search/channels/${searchTerm}?key=${this.$store.state.apikey.apikey}&limit=100`;
         // console.log(`querying ${url}`);
-        api.get(url).then(data => {
-          this.users.push(...data.data);
-        }).catch((reason) => {
-          console.log(`error when trying to search for authors: ${reason}`);
-          if (reason.response.status === 401) {
-            console.log(`authentication error`)
-          }
-        })
+        api
+          .get(url)
+          .then((data) => {
+            console.log(data);
+            this.users.push(...data.data);
+          })
+          .catch((reason) => {
+            console.log(`error when trying to search for authors: ${reason}`);
+            if (reason.response.status === 401) {
+              console.log(`authentication error`);
+            }
+          });
       }
-    }
+    },
   },
   props: {
-    noNav: {type: Boolean, default: false},
+    noNav: { type: Boolean, default: false },
   },
   setup() {
-    const {dateString} = DateFunc.useDateString()
+    const { dateString } = DateFunc.useDateString();
     return {
       dateString,
-
-      searchTerm: ref(''),
       users: ref([]),
       pagination: {
         page: 1,
-        rowsPerPage: 30
+        rowsPerPage: 30,
       },
       columns: [
         {
-          align: 'left',
-          name: 'avatar',
-          label: '',
+          align: "left",
+          name: "avatar",
+          label: "",
           sortable: false,
-          style: 'width: 24px',
-          headerStyle: 'width: 24px'
+          style: "width: 24px",
+          headerStyle: "width: 24px",
         },
         {
-          align: 'left',
-          name: 'author',
-          label: 'name',
-        }, {
-          align: 'left',
-          name: 'lastTimestamp',
-          label: 'last message',
-          field: row => row.obj.lastTimestamp,
+          align: "left",
+          name: "author",
+          label: "name",
+        },
+        {
+          align: "left",
+          name: "lastTimestamp",
+          label: "last message",
+          field: (row) => row.lastTimestamp,
           sortable: true,
           // sort: (a,b) => sortTimestamp(a, b),
-          sortOrder: 'da',
-          format: val => dateString(val)
+          sortOrder: "da",
+          format: (val) => dateString(val),
         },
       ],
-    }
-  }
-
-})
+    };
+  },
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
