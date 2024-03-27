@@ -15,7 +15,20 @@
         @clear="clearUsers"
         ref="authorSearch"
         @keydown.enter.prevent
-      />
+      >
+        <template v-slot:append>
+          <q-checkbox
+            v-model="caseSensitive"
+            checked-icon="mdi-format-letter-case-upper"
+            unchecked-icon="mdi-format-letter-case"
+            ><q-tooltip
+              >Case-sensitive ({{
+                caseSensitive ? "active" : "inactive"
+              }})</q-tooltip
+            >
+          </q-checkbox>
+        </template>
+      </q-input>
     </q-card-section>
     <q-card-section>
       <q-table
@@ -61,6 +74,7 @@ export default defineComponent({
   data() {
     return {
       searchTerm: "",
+      caseSensitive: false,
     };
   },
   methods: {
@@ -78,8 +92,11 @@ export default defineComponent({
       this.searchTerm = searchTerm;
       this.clearUsers();
       if (searchTerm) {
-        const url = `search/channels/${searchTerm}?key=${this.$store.state.apikey.apikey}&limit=100`;
+        let url = `search/channels/${searchTerm}?key=${this.$store.state.apikey.apikey}&limit=100`;
         // console.log(`querying ${url}`);
+        if (this.caseSensitive) {
+          url += "&caseSensitive=true";
+        }
         api
           .get(url)
           .then((data) => {
