@@ -29,8 +29,8 @@ module.exports = configure(function (ctx) {
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v6',
-      'fontawesome-v5',
+      "mdi-v7",
+      "fontawesome-v5",
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',
@@ -48,9 +48,9 @@ module.exports = configure(function (ctx) {
       // publicPath: '/',
 
       env: {
-        YTCHAT_FRONTEND_API_URL: process.env.YTCHAT_FRONTEND_API_URL ?
-          process.env.YTCHAT_FRONTEND_API_URL :
-          "https://ytchat-api.ngrok.io/api"
+        YTCHAT_FRONTEND_API_URL: process.env.YTCHAT_FRONTEND_API_URL
+          ? process.env.YTCHAT_FRONTEND_API_URL
+          : "https://ytchat-api.ngrok.io/api",
       },
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
@@ -101,7 +101,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Dialog'],
+      plugins: ["Dialog"],
     },
 
     // animations: 'all', // --- includes all animations
