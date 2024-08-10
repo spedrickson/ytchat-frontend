@@ -77,6 +77,11 @@ export default defineComponent({
       caseSensitive: false,
     };
   },
+  watch: {
+    caseSensitive() {
+      this.fetchUserBySearch(this.searchTerm);
+    },
+  },
   methods: {
     authorSelected(author) {
       // console.log(author)
