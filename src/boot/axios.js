@@ -8,7 +8,7 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const backend_url = process.env.YTCHAT_FRONTEND_API_URL
+const backend_url = process.env.YTCHAT_FRONTEND_API_URL;
 
 const api = axios.create({ baseURL: backend_url });
 

@@ -6,30 +6,45 @@
     :responsive="true"
     :dataset-id-key="datasetIdKey"
   />
-<!--    :plugins="plugins"-->
-<!--    :css-classes="cssClasses"-->
-<!--    :styles="styles"-->
-<!--    :width="width"-->
-<!--    :height="height"-->
+  <!--    :plugins="plugins"-->
+  <!--    :css-classes="cssClasses"-->
+  <!--    :styles="styles"-->
+  <!--    :width="width"-->
+  <!--    :height="height"-->
 </template>
 
 <script>
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Bar } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+);
 
 export default {
-  name: 'BarChart',
+  name: "BarChart",
   components: { Bar },
   props: {
     chartId: {
       type: String,
-      default: 'bar-chart'
+      default: "bar-chart",
     },
     datasetIdKey: {
       type: String,
-      default: 'label'
+      default: "label",
     },
     // width: {
     //   type: Number,
@@ -55,8 +70,8 @@ export default {
   data() {
     return {
       chartData: {
-        labels: [ ],
-        datasets: [ { data: [], backgroundColor: "#992323" } ]
+        labels: [],
+        datasets: [{ data: [], backgroundColor: "#992323" }],
       },
       chartOptions: {
         responsive: true,
@@ -70,8 +85,8 @@ export default {
             enabled: false,
           },
         },
-      }
-    }
-  }
-}
+      },
+    };
+  },
+};
 </script>

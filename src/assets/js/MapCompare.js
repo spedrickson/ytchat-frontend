@@ -14,5 +14,5 @@ export function useCompareMaps() {
     }
     return true;
   }
-  return {compareMaps}
+  return { compareMaps };
 }

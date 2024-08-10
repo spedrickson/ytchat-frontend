@@ -3,18 +3,18 @@ import FilterLayout from "layouts/FilterLayout";
 import MessageHistory from "components/MessageHistory";
 import ModComments from "components/ModComments";
 import SentimentLayout from "layouts/SentimentLayout";
-import RandomLayout from "layouts/RandomLayout"
-import IndexLayout from "layouts/IndexLayout"
+import RandomLayout from "layouts/RandomLayout";
+import IndexLayout from "layouts/IndexLayout";
 
 const routes = [
   {
     path: "/",
-    redirect: '/index',
+    redirect: "/index",
   },
   {
-    path: '/index',
-    name: 'index',
-    component: IndexLayout
+    path: "/index",
+    name: "index",
+    component: IndexLayout,
   },
   {
     name: "channel view",
@@ -24,21 +24,27 @@ const routes = [
       {
         path: ":channelID",
         component: MessageHistory,
-        alias: ":channelID/messages"
-      },{
+        alias: ":channelID/messages",
+      },
+      {
         path: ":channelID/messages",
         component: MessageHistory,
-      },{
+      },
+      {
         path: ":channelID/modcomments",
         component: ModComments,
-    },]
-  },{
+      },
+    ],
+  },
+  {
     path: "/filtered",
     component: FilterLayout,
-  },{
+  },
+  {
     path: "/sentiment",
     component: SentimentLayout,
-  },{
+  },
+  {
     path: "/randommessage",
     component: RandomLayout,
   },

@@ -2,15 +2,35 @@
   <q-layout class="main-layout" view="hHh LpR fFf">
     <q-header elevated height-hint="98">
       <q-toolbar>
-        <q-btn dense flat round icon="fas fa-dice" @click="drawerOpen = !drawerOpen"/>
+        <q-btn
+          dense
+          flat
+          round
+          icon="fas fa-dice"
+          @click="drawerOpen = !drawerOpen"
+        />
         <q-toolbar-title>random message</q-toolbar-title>
-        <api-key-input ref="apiKeyInput"/>
+        <api-key-input ref="apiKeyInput" />
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="drawerOpen" persistent ref="drawer" side="left" bordered class="overflow-hidden">
+    <q-drawer
+      v-model="drawerOpen"
+      persistent
+      ref="drawer"
+      side="left"
+      bordered
+      class="overflow-hidden"
+    >
       <div class="q-pa-md">
         <div class="row">
-          <q-input dense debounce="500" standout class="col-4 q-pa-xs" v-model.number="delaySeconds" type="number"/>
+          <q-input
+            dense
+            debounce="500"
+            standout
+            class="col-4 q-pa-xs"
+            v-model.number="delaySeconds"
+            type="number"
+          />
           <q-slider
             class="col-8 q-pa-xs"
             switch-label-side
@@ -25,7 +45,14 @@
         </div>
 
         <div class="row">
-          <q-input dense class="col-12 q-pa-xs" v-model="searchTerm" standout label="messages starting with..." label-color="grey-7"/>
+          <q-input
+            dense
+            class="col-12 q-pa-xs"
+            v-model="searchTerm"
+            standout
+            label="messages starting with..."
+            label-color="grey-7"
+          />
         </div>
 
         <div>
@@ -36,17 +63,17 @@
       </div>
     </q-drawer>
 
-    <q-page-container >
-      <message v-if="messageObj" :message="messageObj"/>
+    <q-page-container>
+      <message v-if="messageObj" :message="messageObj" />
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import {defineComponent, ref} from 'vue'
+import { defineComponent, ref } from "vue";
 import ApiKeyInput from "components/ApiKeyInput";
 
-import {api} from "boot/axios";
+import { api } from "boot/axios";
 import Message from "components/Message";
 
 export default defineComponent({
@@ -55,8 +82,10 @@ export default defineComponent({
     Message,
     ApiKeyInput,
   },
-  setup() {return {
-    leftDrawerOpen: ref(false)}
+  setup() {
+    return {
+      leftDrawerOpen: ref(false),
+    };
   },
 
   data() {
@@ -76,37 +105,43 @@ export default defineComponent({
   methods: {
     setFiltersFromUrl() {
       if (this.$route.query.message) {
-        this.searchTerm = this.$route.query.message
+        this.searchTerm = this.$route.query.message;
       }
     },
     fetchMessages() {
-      if (this.loading) return
-      this.loading = true
-      const url = `/randommessage?key=${this.apikey()}`
+      if (this.loading) return;
+      this.loading = true;
+      const url = `/randommessage?key=${this.apikey()}`;
 
       const body = {
         filter: `^${this.searchTerm}`,
-        timestamp: new Date().getTime() - (this.delaySeconds * 1000)
-      }
+        timestamp: new Date().getTime() - this.delaySeconds * 1000,
+      };
 
-      api.post(url, body).then((data) => {
-        if (data.data.length > 0) {
-          this.messageObj = data.data[0]
-        }
-      }).catch(reason => {
-        console.log(`error when trying to query random messages: ${reason}`);
-        if (reason?.response?.status === 401) this.$refs.apiKeyInput.show()
-      }).finally(() => this.loading = false);
+      api
+        .post(url, body)
+        .then((data) => {
+          if (data.data.length > 0) {
+            this.messageObj = data.data[0];
+          }
+        })
+        .catch((reason) => {
+          console.log(`error when trying to query random messages: ${reason}`);
+          if (reason?.response?.status === 401) this.$refs.apiKeyInput.show();
+        })
+        .finally(() => (this.loading = false));
     },
 
-    apikey() {return this.$store.state.apikey.apikey},
+    apikey() {
+      return this.$store.state.apikey.apikey;
+    },
   },
 
   mounted() {
-    this.setFiltersFromUrl()
-    this.$refs.drawer.show()
+    this.setFiltersFromUrl();
+    this.$refs.drawer.show();
   },
-})
+});
 </script>
 
 <style lang="sass">

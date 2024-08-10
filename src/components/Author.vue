@@ -1,29 +1,50 @@
 <template>
   <span>
-
-    <q-avatar v-if="author.isChatSponsor"
-              icon="fas fa-dollar-sign" size="sm" font-size="1.4rem"
-              class="badge-chat badge-sub col-sm">
-      <q-tooltip>
-        channel member
-      </q-tooltip>
+    <q-avatar
+      v-if="author.isChatSponsor"
+      icon="fas fa-dollar-sign"
+      size="sm"
+      font-size="1.4rem"
+      class="badge-chat badge-sub col-sm"
+    >
+      <q-tooltip> channel member </q-tooltip>
     </q-avatar>
-    <q-avatar v-if="author.isChatModerator"
-              rounded size="sm"
-              font-size="1.2rem"
-              class="badge-chat badge-mod col-sm" icon="fas fa-wrench">
+    <q-avatar
+      v-if="author.isChatModerator"
+      rounded
+      size="sm"
+      font-size="1.2rem"
+      class="badge-chat badge-mod col-sm"
+      icon="fas fa-wrench"
+    >
       <q-tooltip>moderator</q-tooltip>
     </q-avatar>
-    <q-avatar v-if="author.isChatOwner"
-              rounded size="sm"
-              font-size="1.1rem"
-              icon="fas fa-video" class="badge-chat badge-owner col-2 overflow-hidden">
+    <q-avatar
+      v-if="author.isChatOwner"
+      rounded
+      size="sm"
+      font-size="1.1rem"
+      icon="fas fa-video"
+      class="badge-chat badge-owner col-2 overflow-hidden"
+    >
       <q-tooltip>channel owner</q-tooltip>
     </q-avatar>
-<!--    <q-btn dense no-caps flat :to="`/user/${channelId}/messages`" padding="0">-->
-    <q-btn dense no-caps flat @click="clicked" padding="0" :to="`/user/${author.channelId}/messages`">
+    <!--    <q-btn dense no-caps flat :to="`/user/${channelId}/messages`" padding="0">-->
+    <q-btn
+      dense
+      no-caps
+      flat
+      @click="clicked"
+      padding="0"
+      :to="`/user/${author.channelId}/messages`"
+    >
       <template v-if="author.isVerified">
-        <q-chip dense icon="fas fa-check" color="primary" class="author-name badge-chat">
+        <q-chip
+          dense
+          icon="fas fa-check"
+          color="primary"
+          class="author-name badge-chat"
+        >
           {{ author.name.substring(0, nameMaxLen) }}
         </q-chip>
         <!--      {{ name }}-->
@@ -36,43 +57,42 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
-const nameMaxLen = 25
+const nameMaxLen = 25;
 
 export default defineComponent({
-    name: "AuthorComponent",
-    emits: ['clicked'],
-    props: {
-      // name: {default: null},
-      // channelId: {default: null},
-      // channelUrl: {default: null},
-      // // imageUrl: {default: null},
-      // isChatOwner: {default: false},
-      // isVerified: {default: false},
-      // isChatModerator: {default: false},
-      // isChatSponsor: {default: false},
-      // badgeUrl: {default: null},
-      noNav: {type: Boolean, default: false},
-      author: {default: null},
-    },
+  name: "AuthorComponent",
+  emits: ["clicked"],
+  props: {
+    // name: {default: null},
+    // channelId: {default: null},
+    // channelUrl: {default: null},
+    // // imageUrl: {default: null},
+    // isChatOwner: {default: false},
+    // isVerified: {default: false},
+    // isChatModerator: {default: false},
+    // isChatSponsor: {default: false},
+    // badgeUrl: {default: null},
+    noNav: { type: Boolean, default: false },
+    author: { default: null },
+  },
   methods: {
     clicked(e, go) {
-      e.preventDefault()
+      e.preventDefault();
       if (this.noNav) {
         // console.log("no nav")
-        this.$emit('clicked', this.author)
+        this.$emit("clicked", this.author);
       } else {
         // console.log("was nav")
-        go()
+        go();
       }
-    }
+    },
   },
-    setup() {
-      return {nameMaxLen}
-    }
+  setup() {
+    return { nameMaxLen };
   },
-);
+});
 </script>
 
 <style scoped lang="sass">
@@ -99,5 +119,4 @@ export default defineComponent({
   font-size: larger
 
 //.author-btn
-
 </style>
