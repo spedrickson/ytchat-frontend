@@ -31,6 +31,10 @@ const routes = [
         component: MessageHistory,
       },
       {
+        path: ":channelID/comments",
+        component: () => import("pages/UserComments.vue"),
+      },
+      {
         path: ":channelID/modcomments",
         component: ModComments,
       },
