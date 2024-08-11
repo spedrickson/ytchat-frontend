@@ -1,12 +1,6 @@
 <template>
-  <q-card class="main-card" style="min-height: 400px">
-    <q-scroll-area
-      visible
-      class="fit"
-      style="min-height: 400px"
-      id="scroll-area"
-      ref="scrollTarget"
-    >
+  <q-responsive :ratio="16 / 9">
+    <q-scroll-area visible id="scroll-area" ref="scrollTarget">
       <q-card
         v-if="reachedBeginning"
         @click="reachedBeginning = false"
@@ -59,9 +53,7 @@
           <span v-else>auto load new messages</span>
         </q-btn>
       </div>
-      <div class="text-center" v-if="messages.length === 0">
-        <h2>No messages :(</h2>
-      </div>
+      <load-or-error :loading="loading" :count="messages.length" />
     </q-scroll-area>
     <q-page-sticky
       v-show="!autoScroll"
@@ -76,20 +68,21 @@
         icon="arrow_downward"
       />
     </q-page-sticky>
-  </q-card>
+  </q-responsive>
 </template>
 
 <script>
 import { defineComponent, nextTick, ref } from "vue";
 import Message from "components/Message";
 import { api } from "boot/axios.js";
+import LoadOrError from "./LoadOrError.vue";
 
 const MESSAGE_CAP = 250;
 const API_LIMIT = 100;
 
 export default defineComponent({
   name: "MessageHistory",
-  components: { Message },
+  components: { Message, LoadOrError },
   emits: ["autoscroll-disabled", "autoscroll-enabled"],
 
   setup() {
