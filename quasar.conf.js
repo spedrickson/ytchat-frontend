@@ -78,10 +78,12 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
+      hot: false,
+      liveReload: true,
       server: {
         type: "http",
       },
-      webSocketServer: false,
+      // webSocketServer: false,
       port: 8080,
       open: false, // opens browser window automatically
     },
