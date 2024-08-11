@@ -6,30 +6,42 @@
         <q-toolbar-title>
           <author-header v-bind="author" />
         </q-toolbar-title>
-        <api-key-input ref="apiKeyInput" />
-      </q-toolbar>
-      <q-toolbar>
-        <q-btn label="ban" icon="fas fa-skull" dense
+        <q-btn label="ban" icon="mdi-skull" dense flat
           ><q-tooltip>not implemented for obvious reasons</q-tooltip></q-btn
         >
         <q-tabs
+          shrink
+          inline-label
           v-model="tab"
-          dense
+          no-caps
           class="text-grey"
           active-color="accent"
           indicator-color="accent"
         >
           <q-route-tab
             name="messages"
-            label="Messages"
+            label="messages"
+            icon="mdi-chat"
             :to="`/user/${$route.params.channelID}/messages`"
             exact
           >
-            <q-badge :label="`${author?.messageCount}`" />
+            <q-badge :label="`${author?.messageCount ?? 0}`" />
           </q-route-tab>
+
+          <q-route-tab
+            name="comments"
+            label="comments"
+            icon="mdi-comment-text"
+            :to="`/user/${$route.params.channelID}/comments`"
+            exact
+          >
+            <q-badge :label="`${author?.commentCount ?? 0}`" />
+          </q-route-tab>
+
           <q-route-tab
             name="modComments"
-            label="Mod Comments"
+            label="mod comments"
+            icon="mdi-shield-sword"
             :to="`/user/${$route.params.channelID}/modcomments`"
             exact
           >
@@ -40,18 +52,21 @@
             />
           </q-route-tab>
         </q-tabs>
-        <q-card
-          class="bg-negative q-pa-none q-gutter-none"
-          v-if="author?.isBanned"
-        >
-          <q-card-section>
-            <q-icon name="fas fa-skull" />
-            User is (probably) banned!!
-          </q-card-section>
-        </q-card>
+        <api-key-input ref="apiKeyInput" />
       </q-toolbar>
+      <!-- <q-toolbar> -->
+      <q-card
+        class="bg-negative q-pa-none q-gutter-none"
+        v-if="author?.isBanned"
+      >
+        <q-card-section>
+          <q-icon name="fas fa-skull" />
+          User is (probably) banned!!
+        </q-card-section>
+      </q-card>
+      <!-- </q-toolbar> -->
     </q-header>
-    <router-view style="padding-top: 100px" />
+    <router-view style="padding-top: 50px" />
     <q-drawer bordered elevated v-model="drawerLeft" side="left" :width="500">
       <better-user-search style="max-height: 100%" ref="authorSearch" />
     </q-drawer>
