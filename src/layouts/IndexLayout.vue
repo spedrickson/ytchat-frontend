@@ -1,7 +1,7 @@
 <template>
   <q-layout class="main-layout" view="hHh lpR fFf" style="display: flex">
     <q-header elevated height-hint="98">
-      <q-toolbar>
+      <q-toolbar class="toolbar">
         <q-btn
           dense
           flat
@@ -29,7 +29,7 @@
         <q-btn
           padding="sm"
           push
-          color="primary"
+          color="info"
           to="/filtered"
           class="index-btn col-12"
           icon="fas fa-filter"
@@ -37,7 +37,7 @@
         >
         <q-btn
           push
-          color="primary"
+          color="info"
           to="/sentiment"
           class="index-btn col-12"
           icon="fas fa-theater-masks"
@@ -75,7 +75,7 @@
         </q-btn>
         <q-btn
           push
-          color="primary"
+          color="info"
           to="/randommessage?test=true"
           class="index-btn col-12"
           icon="fas fa-dice"

@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar>
+  <q-toolbar-title>
     <q-btn flat class="channel-btn" :href="channelUrl">
       <div class="icon-container">
         <div class="layer1">
@@ -15,15 +15,12 @@
       </q-img>
       <q-img :src="badgeUrl" v-if="badgeUrl" />
     </q-avatar>
-    <q-toolbar-title>
-      {{ name }}
-    </q-toolbar-title>
-  </q-toolbar>
+    {{ name }}
+  </q-toolbar-title>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import AuthorComponent from "components/Author";
 import { ref } from "vue";
 
 export default defineComponent({
@@ -59,5 +56,6 @@ export default defineComponent({
   grid-row: 1
 
 .yt-logo
+  min-height: 20px
   color: #FF0000
 </style>

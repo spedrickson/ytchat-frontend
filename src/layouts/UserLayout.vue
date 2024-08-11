@@ -1,7 +1,7 @@
 <template>
   <q-layout class="main-layout" view="hHh Lpr lff" style="display: flex">
-    <q-header elevated>
-      <q-toolbar>
+    <q-header>
+      <q-toolbar class="toolbar" shrink>
         <q-btn dense flat round icon="search" @click="toggleSearch" />
         <q-toolbar-title>
           <author-header v-bind="author" />
@@ -16,7 +16,7 @@
           no-caps
           class="text-grey"
           active-color="accent"
-          indicator-color="accent"
+          indicator-color="primary"
         >
           <q-route-tab
             name="messages"
@@ -25,7 +25,12 @@
             :to="`/user/${$route.params.channelID}/messages`"
             exact
           >
-            <q-badge :label="`${author?.messageCount ?? 0}`" />
+            <q-badge
+              class="count-badge"
+              color="accent"
+              text-color="dark"
+              :label="`${author?.messageCount?.toLocaleString() ?? 0}`"
+            />
           </q-route-tab>
 
           <q-route-tab
@@ -35,7 +40,12 @@
             :to="`/user/${$route.params.channelID}/comments`"
             exact
           >
-            <q-badge :label="`${author?.commentCount ?? 0}`" />
+            <q-badge
+              color="accent"
+              class="count-badge"
+              text-color="dark"
+              :label="`${author?.commentCount?.toLocaleString() ?? 0}`"
+            />
           </q-route-tab>
 
           <q-route-tab
@@ -46,7 +56,8 @@
             exact
           >
             <q-badge
-              :label="`${author?.modcommentCount}`"
+              class="count-badge"
+              :label="`${author?.modcommentCount?.toLocaleString()}`"
               color="negative"
               v-if="author?.modcommentCount"
             />
@@ -129,3 +140,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.count-badge {
+  margin-left: 8px;
+}
+</style>
