@@ -4,26 +4,16 @@
     style="width: 100%"
   >
     <div class="row items-end">
-      <date-time-picker
-        @modified="modified"
-        class="col"
-        ref="afterPicker"
-        label="After:"
-      />
+      <date-time-picker v-model="after" class="col" label="After:" />
     </div>
     <div class="row">
-      <date-time-picker
-        @modified="modified"
-        class="col"
-        ref="beforePicker"
-        label="Before:"
-      />
+      <date-time-picker v-model="before" class="col" label="Before:" />
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import DateTimePicker from "components/DateTimePicker";
 import { date } from "quasar";
 
@@ -33,20 +23,29 @@ export default defineComponent({
   name: "RangePicker",
   components: { DateTimePicker },
   emits: ["modified"],
-  setup() {
+  watch: {
+    before() {
+      console.log("before");
+      this.modified();
+    },
+    after() {
+      this.modified();
+    },
+  },
+  data() {
     return {
-      beforePicker: ref(null),
-      afterPicker: ref(null),
+      before: null,
+      after: null,
     };
   },
   methods: {
     getBeforeTimestamp() {
       // console.log(result);
-      return this.stringToTimestamp(this.beforePicker.getValue());
+      return this.stringToTimestamp(this.before);
     },
     getAfterTimestamp() {
       // console.log(result)
-      return this.stringToTimestamp(this.afterPicker.getValue());
+      return this.stringToTimestamp(this.after);
     },
     modified() {
       this.$emit("modified");
