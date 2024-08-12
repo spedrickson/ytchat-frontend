@@ -83,7 +83,6 @@ const API_LIMIT = 100;
 export default defineComponent({
   name: "MessageHistory",
   components: { Message, LoadOrError },
-  emits: ["autoscroll-disabled", "autoscroll-enabled"],
 
   setup() {
     return {
@@ -216,7 +215,4 @@ export default defineComponent({
 .refresh-btn
   background: darkslategrey
   width: 100%
-.main-card
-  display: flex
-  align-items: stretch
 </style>
