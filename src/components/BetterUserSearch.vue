@@ -147,7 +147,7 @@ export default defineComponent({
           align: "left",
           name: "lastTimestamp",
           label: "last message",
-          field: (row) => row.lastTimestamp,
+          field: (row) => row.lastMessageTimestamp ?? row.lastCommentTimestamp,
           sortable: true,
           // sort: (a,b) => sortTimestamp(a, b),
           sortOrder: "da",
