@@ -25,7 +25,6 @@ import { debounce } from "quasar";
 export default defineComponent({
   name: "ApiKeyInput",
   created() {
-    this.debounceTestApiKey = debounce(this.testApiKey, 500);
     if (this.$store.state.apikey.apikey.length === 0) {
       const localKey = localStorage.getItem("apikey");
       if (localKey) this.$store.commit("apikey/setApikey", localKey);
@@ -41,7 +40,6 @@ export default defineComponent({
   watch: {
     apikey(val) {
       this.$store.commit("apikey/setApikey", val);
-      this.debounceTestApiKey();
     },
   },
   mounted() {
