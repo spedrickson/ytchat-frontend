@@ -5,7 +5,7 @@
         v-if="reachedBeginning"
         @click="reachedBeginning = false"
         class="text-grey-6"
-        ><q-icon name="fas fa-hourglass-empty" />no more messages...</q-card
+        ><q-icon name="mdi-timer-sand-empty" />no more messages...</q-card
       >
       <q-btn
         v-else

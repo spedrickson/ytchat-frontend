@@ -10,7 +10,7 @@
     </q-btn>
     <q-avatar>
       <q-img :src="imageUrl">
-        <template v-slot:error><q-icon name="fas fa-user" /></template>
+        <template v-slot:error><q-icon name="mdi-user" /></template>
         <template v-slot:loading>LOADING</template>
       </q-img>
       <q-img :src="badgeUrl" v-if="badgeUrl" />

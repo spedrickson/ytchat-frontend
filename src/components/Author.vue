@@ -2,7 +2,7 @@
   <span>
     <q-avatar
       v-if="author.isChatSponsor"
-      icon="fas fa-dollar-sign"
+      icon="mdi-currency-usd"
       size="sm"
       font-size="1.4rem"
       class="badge-chat badge-sub col-sm"
@@ -15,7 +15,7 @@
       size="sm"
       font-size="1.2rem"
       class="badge-chat badge-mod col-sm"
-      icon="fas fa-wrench"
+      icon="mdi-wrench"
     >
       <q-tooltip>moderator</q-tooltip>
     </q-avatar>
@@ -24,7 +24,7 @@
       rounded
       size="sm"
       font-size="1.1rem"
-      icon="fas fa-video"
+      icon="mdi-video-check"
       class="badge-chat badge-owner col-2 overflow-hidden"
     >
       <q-tooltip>channel owner</q-tooltip>
@@ -41,7 +41,7 @@
       <template v-if="author.isVerified">
         <q-chip
           dense
-          icon="fas fa-check"
+          icon="mdi-check-bold"
           color="primary"
           class="author-name badge-chat"
         >

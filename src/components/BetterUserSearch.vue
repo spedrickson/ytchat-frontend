@@ -44,7 +44,7 @@
         <template v-slot:body-cell-avatar="row">
           <q-td>
             <q-img :src="row.row.imageUrl" height="24px" width="24px">
-              <template v-slot:error><q-icon name="fas fa-user" /></template>
+              <template v-slot:error><q-icon name="mdi-account" /></template>
               <template v-slot:loading>LOADING</template>
             </q-img>
           </q-td>

@@ -1,5 +1,5 @@
 <template>
-  <q-btn-dropdown icon="fas fa-lock" label="apikey">
+  <q-btn-dropdown icon="mdi-lock" label="apikey">
     <q-input label="API Key:" v-model="apikey" type="password" />
   </q-btn-dropdown>
   <q-dialog v-model="showDialog" persistent ref="overlay">
