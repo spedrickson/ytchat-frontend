@@ -6,10 +6,12 @@
           dense
           flat
           round
-          icon="fas fa-theater-masks"
+          icon="mdi-menu"
           @click="this.leftDrawerOpen = !this.leftDrawerOpen"
         />
-        <q-toolbar-title>ytchat sentiment</q-toolbar-title>
+        <q-toolbar-title
+          >ytchat sentiment <q-icon name="mdi-vote"
+        /></q-toolbar-title>
         <api-key-input ref="apiKeyInput" />
       </q-toolbar>
     </q-header>

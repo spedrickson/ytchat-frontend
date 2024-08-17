@@ -6,10 +6,12 @@
           dense
           flat
           round
-          icon="fas fa-filter"
+          icon="mdi-menu"
           @click="this.drawerLeft = !this.drawerLeft"
         />
-        <q-toolbar-title>filtered ytchat</q-toolbar-title>
+        <q-toolbar-title
+          >filtered ytchat <q-icon name="mdi-filter"
+        /></q-toolbar-title>
         <api-key-input />
       </q-toolbar>
     </q-header>
@@ -28,13 +30,13 @@
         dense
         dense-toggle
         label="Users"
-        icon="person_search"
+        icon="mdi-account-search"
       >
         <q-btn
           no-wrap
           no-caps
           color="primary"
-          icon="fas fa-user-plus"
+          icon="mdi-account-plus"
           label="Add users to filter"
           style="width: 100%"
         >
@@ -47,7 +49,7 @@
           no-wrap
           no-caps
           color="negative"
-          icon="fas fa-user-minus"
+          icon="mdi-account-minus"
           label="Clear (show all users)"
           style="width: 100%"
           @click="users.clear()"
@@ -78,7 +80,7 @@
         dense
         dense-toggle
         label="Message Types"
-        icon="filter_list"
+        icon="mdi-format-list-bulleted-type"
         :caption="typesCaption"
         cap
       >
@@ -96,7 +98,7 @@
         dense
         dense-toggle
         label="Date/Time Range"
-        icon="history"
+        icon="mdi-history"
       >
         <range-picker class="row" ref="rangePicker" @modified="modified" />
       </q-expansion-item>
@@ -107,7 +109,7 @@
         dense
         dense-toggle
         label="User Types"
-        icon="manage_accounts"
+        icon="mdi-account-details"
       >
         <q-card class="bg-warning text-dark" v-show="userTypes.length">
           <q-card-section>

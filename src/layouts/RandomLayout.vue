@@ -6,10 +6,12 @@
           dense
           flat
           round
-          icon="fas fa-dice"
+          icon="mdi-menu"
           @click="drawerOpen = !drawerOpen"
         />
-        <q-toolbar-title>random message</q-toolbar-title>
+        <q-toolbar-title
+          >random message <q-icon name="mdi-dice-multiple"
+        /></q-toolbar-title>
         <api-key-input ref="apiKeyInput" />
       </q-toolbar>
     </q-header>

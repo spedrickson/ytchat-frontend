@@ -6,11 +6,12 @@
           dense
           flat
           round
-          icon="search"
+          icon="mdi-menu"
           @click="drawerLeft = !drawerLeft"
         />
-        <q-separator dark vertical inset />
-        <q-toolbar-title>ytchat-index</q-toolbar-title>
+        <q-toolbar-title
+          >ytchat-index <q-icon name="mdi-comment-search"
+        /></q-toolbar-title>
         <api-key-input ref="apiKeyInput" />
       </q-toolbar>
     </q-header>

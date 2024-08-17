@@ -2,7 +2,7 @@
   <q-layout class="main-layout" view="hHh Lpr lff" style="display: flex">
     <q-header>
       <q-toolbar class="toolbar" shrink>
-        <q-btn dense flat round icon="search" @click="toggleSearch" />
+        <q-btn dense flat round icon="mdi-menu" @click="toggleSearch" />
         <q-toolbar-title>
           <author-header v-bind="author" />
         </q-toolbar-title>
@@ -65,20 +65,18 @@
         </q-tabs>
         <api-key-input ref="apiKeyInput" />
       </q-toolbar>
-      <!-- <q-toolbar> -->
       <q-card
         class="bg-negative q-pa-none q-gutter-none"
         v-if="author?.isBanned"
       >
         <q-card-section>
-          <q-icon name="fas fa-skull" />
+          <q-icon name="mdi-skull" />
           User is (probably) banned!!
         </q-card-section>
       </q-card>
-      <!-- </q-toolbar> -->
     </q-header>
     <router-view style="padding-top: 50px" />
-    <q-drawer bordered elevated v-model="drawerLeft" side="left" :width="500">
+    <q-drawer bordered v-model="drawerLeft" side="left" :width="500">
       <better-user-search style="max-height: 100%" ref="authorSearch" />
     </q-drawer>
   </q-layout>
