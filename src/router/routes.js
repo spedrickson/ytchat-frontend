@@ -52,6 +52,10 @@ const routes = [
     path: "/randommessage",
     component: RandomLayout,
   },
+  {
+    path: "/frequency",
+    component: () => import("layouts/FrequencyLayout.vue"),
+  },
 
   // Always leave this as last one,
   // but you can also remove it

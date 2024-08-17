@@ -32,7 +32,7 @@
           color="info"
           to="/filtered"
           class="index-btn col-12"
-          icon="fas fa-filter"
+          icon="mdi-filter"
           >Filtered Chat</q-btn
         >
         <q-btn
@@ -40,7 +40,7 @@
           color="info"
           to="/sentiment"
           class="index-btn col-12"
-          icon="fas fa-theater-masks"
+          icon="mdi-vote"
         >
           Chat Sentiment<br />
           <q-btn-group class="col-12 self-end" push style="text-align: center">
@@ -78,8 +78,16 @@
           color="info"
           to="/randommessage?test=true"
           class="index-btn col-12"
-          icon="fas fa-dice"
+          icon="mdi-dice-multiple"
           >Random Message</q-btn
+        >
+        <q-btn
+          push
+          color="info"
+          to="/frequency"
+          class="index-btn col-12"
+          icon="mdi-sine-wave"
+          >Chat Frequency</q-btn
         >
       </q-list>
     </q-page-container>
