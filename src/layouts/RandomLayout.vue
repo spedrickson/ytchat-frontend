@@ -1,6 +1,6 @@
 <template>
   <q-layout class="main-layout" view="hHh LpR fFf">
-    <q-header elevated height-hint="98">
+    <q-header height-hint="98">
       <q-toolbar class="toolbar">
         <q-btn
           dense
@@ -146,7 +146,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="sass">
-.expand-header
-  background: $grey-9
-</style>
+<style lang="sass"></style>
