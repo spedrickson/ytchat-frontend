@@ -13,6 +13,7 @@
   "dependencies": {
     "@quasar/cli": "^2.2.1",
     "@quasar/extras": "^1.16.4",
+    "apexcharts": "^3.52.0",
     "axios": "^1.4.0",
     "chart.js": "^4.3.0",
     "chartjs-plugin-sort": "^0.1.1",
@@ -24,6 +25,7 @@
     "vue": "^3.0.0",
     "vue-chartjs": "4",
     "vue-router": "^4.0.0",
+    "vue3-apexcharts": "^1.5.3",
     "vuedraggable": "^4.1.0",
     "vuex": "^4.0.1",
     "vuex-persistedstate": "^4.1.0"
