@@ -10,9 +10,7 @@ module.exports = {
     sourceType: "module", // Allows for the use of imports
   },
 
-  env: {
-    browser: true,
-  },
+  env: { browser: true, "vue/setup-compiler-macros": true },
 
   // Rules order is important, please avoid shuffling them
   extends: [

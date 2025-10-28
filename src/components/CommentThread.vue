@@ -26,7 +26,7 @@
 <script setup>
 import UserComment from "src/components/UserComment.vue";
 import { getFullThread } from "src/helpers/comments";
-import { defineProps, defineOptions, ref } from "vue";
+import { ref } from "vue";
 import { useStore } from "vuex";
 defineOptions({ name: "CommentThread" });
 const props = defineProps(["comment"]);

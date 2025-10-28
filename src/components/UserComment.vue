@@ -35,13 +35,10 @@
 </template>
 
 <script setup>
-import { defineProps, defineOptions, computed, defineEmits } from "vue";
+import { computed } from "vue";
 defineOptions({ name: "UserComment" });
 defineEmits(["openReplies"]);
-const props = defineProps({
-  comment: Object,
-  parent: Boolean,
-});
+const props = defineProps({ comment: Object, parent: Boolean });
 // only show replies button if more than 1 reply for parent comments (it's already rendering the child)
 const replyThreshold = computed(() => {
   return props.parent === true ? 1 : 0;
