@@ -6,11 +6,6 @@
     :responsive="true"
     :dataset-id-key="datasetIdKey"
   />
-  <!--    :plugins="plugins"-->
-  <!--    :css-classes="cssClasses"-->
-  <!--    :styles="styles"-->
-  <!--    :width="width"-->
-  <!--    :height="height"-->
 </template>
 
 <script>
@@ -38,53 +33,33 @@ export default {
   name: "BarChart",
   components: { Bar },
   props: {
-    chartId: {
-      type: String,
-      default: "bar-chart",
-    },
-    datasetIdKey: {
-      type: String,
-      default: "label",
-    },
-    // width: {
-    //   type: Number,
-    //   default: 1000
-    // },
-    // height: {
-    //   type: Number,
-    //   default: 1000
-    // },
-    // cssClasses: {
-    //   default: '',
-    //   type: String
-    // },
-    // styles: {
-    //   type: Object,
-    //   default: () => {}
-    // },
-    // plugins: {
-    //   type: Object,
-    //   default: () => {}
-    // }
+    chartId: { type: String, default: "bar-chart" },
+    datasetIdKey: { type: String, default: "label" },
   },
   data() {
     return {
       chartData: {
         labels: [],
-        datasets: [{ data: [], backgroundColor: "#992323" }],
+        datasets: [
+          {
+            data: [],
+            backgroundColor: [
+              "rgba(255, 127, 128, 1)",
+              "rgba(255, 192, 127, 1)",
+              "rgba(255, 223, 128, 1)",
+              "rgba(255, 255, 127, 1)",
+              "rgba(191, 255, 127, 1)",
+              "rgba(127, 255, 127, 1)",
+              "rgba(128, 255, 255, 1)",
+            ],
+          },
+        ],
       },
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
         responsiveAnimationDuration: 0,
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltips: {
-            enabled: false,
-          },
-        },
+        plugins: { legend: { display: false }, tooltips: { enabled: false } },
       },
     };
   },

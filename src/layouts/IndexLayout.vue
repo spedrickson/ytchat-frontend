@@ -52,6 +52,13 @@
               class="index-btn"
               >Yes/No</q-btn
             >
+            <q-btn
+              color="light-blue-8"
+              push
+              to="/sentiment?m=S&m=A&m=B&m=C&m=D&m=F&m=skip"
+              class="index-btn"
+              >Tier List</q-btn
+            >
             <q-separator vertical />
             <q-btn
               color="light-blue-8"
