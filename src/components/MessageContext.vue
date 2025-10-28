@@ -27,10 +27,7 @@
           <template v-slot:header>
             <q-tr>
               <q-btn class="load-btn"
-                >LOAD MORE
-                <q-tooltip>
-                  not implemented yet, yell at spedrickson to fix
-                </q-tooltip></q-btn
+                >LOAD MORE <q-tooltip> not implemented yet </q-tooltip></q-btn
               >
             </q-tr>
           </template>
@@ -122,17 +119,18 @@ export default defineComponent({
         return this.$store.state.apikey.apikey;
       },
       getContext() {
-        // const newerFilters = {
-        //   timestamp: {$gt: this.message.timestamp},
-        // }
-        // const olderFilters = {
-        //   timestamp: {$gt: this.message.timestamp},
-        // }
         const results = [this.message];
-        const newer_url = `/messages/newer?key=${this.apikey()}&messageID=${this.messages[0]?._id ?? this.message._id}`;
-        // console.log(`querying for context: ${newer_url}`)
+        const url = `/messages?key=${this.apikey()}`;
+        const newerFilters = {
+          filters: {
+            timestamp: { $gt: this.message.timestamp },
+          },
+          sort: {
+            timestamp: 1,
+          },
+        };
         api
-          .get(newer_url)
+          .post(url, newerFilters)
           .then((data) => {
             results.push(...data.data);
           })
@@ -141,10 +139,20 @@ export default defineComponent({
               `error when fetching context (newer): ${reason.message}`,
             );
           });
-        const older_url = `/messages/older?key=${this.apikey()}&messageID=${this.messages[this.messages.length - 1]?._id ?? this.message._id}`;
-        // console.log(`querying for context: ${older_url}`)
+
+        const olderFilters = {
+          filters: {
+            timestamp: {
+              $lt: this.message.timestamp,
+              $gt: this.message.timestamp - 5000000, // limit to last hour to make performant
+            },
+          },
+          sort: {
+            timestamp: -1,
+          },
+        };
         api
-          .get(older_url)
+          .post(url, olderFilters)
           .then((data) => {
             results.unshift(...data.data.reverse()); // O(n) :(
             nextTick(() => {
