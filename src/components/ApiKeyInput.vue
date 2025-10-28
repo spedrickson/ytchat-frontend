@@ -35,6 +35,7 @@ export default defineComponent({
     return {
       apikey: ref(""),
       showDialog: ref(false),
+      failCount: 0,
     };
   },
   watch: {

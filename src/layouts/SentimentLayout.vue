@@ -12,6 +12,13 @@
         <q-toolbar-title
           >ytchat sentiment <q-icon name="mdi-vote"
         /></q-toolbar-title>
+        <q-btn
+          dense
+          flat
+          icon="mdi-clipboard"
+          label="Copy to clipboard"
+          @click="saveToClipboard"
+        />
         <api-key-input ref="apiKeyInput" />
       </q-toolbar>
     </q-header>
@@ -108,6 +115,7 @@ import { defineComponent, ref } from "vue";
 import ApiKeyInput from "components/ApiKeyInput";
 import BarChart from "../components/BarChart";
 import draggable from "vuedraggable";
+import { copyToClipboard } from "quasar";
 
 import { api } from "boot/axios";
 
@@ -132,6 +140,7 @@ export default defineComponent({
       lastResponse: {},
       loaded: false,
       chartData: {},
+      failCount: 0,
     };
   },
 
@@ -182,7 +191,8 @@ export default defineComponent({
           if (!data.data) {
             return;
           }
-          // console.log(data.data)
+          this.$refs.apiKeyInput.hide();
+          // console.log("sentiment data", data.data);
           this.lastResponse = data.data;
           this.setChartData();
         })
@@ -190,7 +200,12 @@ export default defineComponent({
           clearInterval(this.timer);
           this.timer = false;
           console.log(`error when fetching sentiment: ${reason.message}`);
-          if (reason?.response?.status === 401) this.$refs.apiKeyInput.show();
+          this.$refs.apiKeyInput.failCount += 1;
+          if (
+            this.$refs.apiKeyInput.failCount > 5 &&
+            reason?.response?.status === 401
+          )
+            this.$refs.apiKeyInput.show();
         });
     },
 
@@ -249,6 +264,23 @@ export default defineComponent({
       this.$router.replace({
         query: { m: this.messageStrings, s: this.delaySeconds },
       });
+    },
+
+    saveToClipboard() {
+      console.log(JSON.stringify(this.lastResponse));
+      copyToClipboard(JSON.stringify(this.lastResponse))
+        .then(() => {
+          this.$q.notify({
+            type: "positive",
+            message: "Copied to clipboard",
+          });
+        })
+        .catch((e) => {
+          this.$q.notify({
+            type: "negative",
+            message: `Failed to copy to clipboard: ${e.message}`,
+          });
+        });
     },
 
     apikey() {
