@@ -1,8 +1,8 @@
-<template><filtered-history ref="history" class="column col-grow" /></template>
+<template><filtered-history ref="history" /></template>
 
 <script>
 import { defineComponent } from "vue";
-import FilteredHistory from "components/FilteredHistory";
+import FilteredHistory from "pages/FilteredHistory";
 
 export default defineComponent({
   name: "MessageHistory",

@@ -19,7 +19,6 @@
     </q-toolbar>
     <q-toolbar inset v-if="showAdvanced" class="toolbar"> </q-toolbar>
     <q-list>
-      <!-- <q-item dense > -->
       <q-card
         class="col-12 q-pa-xs"
         v-for="comment in comments"
@@ -27,7 +26,6 @@
       >
         <comment-thread :comment="comment" />
       </q-card>
-      <!-- </q-item> -->
     </q-list>
 
     <load-or-error :loading="loading" :count="comments.length" />

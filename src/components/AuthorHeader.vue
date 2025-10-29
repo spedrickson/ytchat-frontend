@@ -1,6 +1,10 @@
 <template>
   <q-toolbar-title>
-    <q-btn flat class="channel-btn" :href="channelUrl">
+    <q-btn
+      flat
+      class="channel-btn"
+      :href="`https://www.youtube.com/channel/${channelId}`"
+    >
       <div class="icon-container">
         <div class="layer1">
           <q-icon name="fab fa-youtube" class="yt-logo" />
@@ -11,9 +15,9 @@
     <q-avatar>
       <q-img :src="imageUrl">
         <template v-slot:error><q-icon name="mdi-user" /></template>
-        <template v-slot:loading>LOADING</template>
+        <template v-slot:loading><q-icon name="mdi-loading" /></template>
       </q-img>
-      <q-img :src="badgeUrl" v-if="badgeUrl" />
+      <q-img v-if="badgeUrl" :src="badgeUrl" />
     </q-avatar>
     {{ name }}
   </q-toolbar-title>
@@ -27,7 +31,7 @@ export default defineComponent({
   name: "AuthorHeader",
   props: {
     name: { default: null },
-    channelUrl: { default: null },
+    channelId: { default: null },
     imageUrl: { default: null },
     isChatOwner: { default: false },
     isVerified: { default: false },
@@ -57,5 +61,5 @@ export default defineComponent({
 
 .yt-logo
   min-height: 20px
-  color: #FF0000
+  color: #FF0033
 </style>

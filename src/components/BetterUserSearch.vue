@@ -45,7 +45,7 @@
           <q-td>
             <q-img :src="row.row.imageUrl" height="24px" width="24px">
               <template v-slot:error><q-icon name="mdi-account" /></template>
-              <template v-slot:loading>LOADING</template>
+              <template v-slot:loading><q-icon name="mdi-loading" /></template>
             </q-img>
           </q-td>
         </template>

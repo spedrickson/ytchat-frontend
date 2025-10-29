@@ -1,6 +1,6 @@
 <template>
-  <q-layout class="main-layout" view="hHh Lpr lff" style="display: flex">
-    <q-header>
+  <q-layout view="lhr lpR lfr">
+    <q-header height-hint="98">
       <q-toolbar class="toolbar" shrink>
         <q-btn dense flat round icon="mdi-menu" @click="toggleSearch" />
         <q-toolbar-title>
@@ -75,10 +75,12 @@
         </q-card-section>
       </q-card>
     </q-header>
-    <router-view style="padding-top: 50px" />
-    <q-drawer bordered v-model="drawerLeft" side="left" :width="500">
-      <better-user-search style="max-height: 100%" ref="authorSearch" />
+    <q-drawer show-if-above bordered v-model="drawerLeft" side="left">
+      <better-user-search ref="authorSearch" />
     </q-drawer>
+    <q-page-container>
+      <router-view />
+    </q-page-container>
   </q-layout>
 </template>
 
@@ -127,7 +129,6 @@ export default {
       title,
       tab: ref("messages"),
       name: ref("no user"),
-      channelUrl: ref(""),
       imageUrl: ref(""),
       drawerLeft: ref(false),
       author: ref(null),

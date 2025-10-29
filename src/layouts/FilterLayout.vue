@@ -1,7 +1,7 @@
 <template>
-  <q-layout class="main-layout" view="hHh lpR fFf" style="display: flex">
+  <q-layout view="lhr lpR lfr">
     <q-header height-hint="98">
-      <q-toolbar class="toolbar">
+      <q-toolbar class="toolbar" shrink>
         <q-btn
           dense
           flat
@@ -15,14 +15,7 @@
         <api-key-input />
       </q-toolbar>
     </q-header>
-    <q-drawer
-      :width="200"
-      :breakpoint="500"
-      show-if-above
-      v-model="drawerLeft"
-      side="left"
-      :persistent="false"
-    >
+    <q-drawer show-if-above bordered v-model="drawerLeft" side="left">
       <q-expansion-item
         header-class="expand-header"
         class="col-auto"
@@ -156,18 +149,14 @@
         />
       </q-page-sticky>
     </q-drawer>
-    <q-page-container style="flex-grow: 1; display: flex">
-      <filtered-history
-        class="row history-box"
-        :filters="filters"
-        ref="history"
-      />
+    <q-page-container>
+      <filtered-history :filters="filters" ref="history" />
     </q-page-container>
   </q-layout>
 </template>
 <script>
 import { defineComponent, nextTick, ref } from "vue";
-import FilteredHistory from "components/FilteredHistory";
+import FilteredHistory from "pages/FilteredHistory";
 import ApiKeyInput from "components/ApiKeyInput";
 import RangePicker from "components/RangePicker";
 import BetterUserSearch from "components/BetterUserSearch";
@@ -228,7 +217,7 @@ export default defineComponent({
       messageRegex: ref(""),
       userTypes: ref([]),
       users: ref(new Map()),
-      drawerLeft: ref(true),
+      drawerLeft: ref(false),
       typesCaption: ref(""),
       messageOptions: [
         { label: "Super Chats ($$$)", value: "superChat" },
@@ -393,9 +382,4 @@ export default defineComponent({
 <style lang="sass">
 .expand-header
   background: $grey-9
-
-.history-box
-  flex-grow: 1
-  min-height: 400px
-  min-width: 400px
 </style>

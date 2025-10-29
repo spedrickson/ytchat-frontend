@@ -1,5 +1,5 @@
 <template>
-  <q-layout class="main-layout" view="hHh lpR fFf" style="display: flex">
+  <q-layout class="main-layout" view="lhr lpR lfr">
     <q-header height-hint="98">
       <q-toolbar class="toolbar">
         <q-btn
@@ -15,17 +15,10 @@
         <api-key-input ref="apiKeyInput" />
       </q-toolbar>
     </q-header>
-    <q-drawer
-      :width="400"
-      :breakpoint="600"
-      show-if-above
-      v-model="drawerLeft"
-      side="left"
-      :persistent="false"
-    >
-      <better-user-search style="max-height: 100%" ref="authorSearch" />
+    <q-drawer show-if-above v-model="drawerLeft" side="left">
+      <better-user-search ref="authorSearch" />
     </q-drawer>
-    <q-page-container style="flex-grow: 1; display: flex">
+    <q-page-container>
       <q-list class="index-list row">
         <q-btn
           padding="sm"
@@ -89,14 +82,6 @@
           icon="mdi-dice-multiple"
           >Random Message</q-btn
         >
-        <q-btn
-          push
-          color="info"
-          to="/frequency"
-          class="index-btn col-12"
-          icon="mdi-sine-wave"
-          >Chat Frequency</q-btn
-        >
       </q-list>
     </q-page-container>
   </q-layout>
@@ -113,7 +98,7 @@ export default defineComponent({
   components: { ApiKeyInput, BetterUserSearch },
   setup() {
     return {
-      drawerLeft: ref(true),
+      drawerLeft: ref(false),
     };
   },
   methods: {

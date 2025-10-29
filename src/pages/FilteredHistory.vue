@@ -1,6 +1,6 @@
 <template>
-  <q-responsive :ratio="16 / 9">
-    <q-scroll-area visible id="scroll-area" ref="scrollTarget">
+  <q-page class="row">
+    <q-scroll-area class="col-12" id="scroll-area" ref="scrollTarget">
       <q-card
         v-if="reachedBeginning"
         @click="reachedBeginning = false"
@@ -54,28 +54,28 @@
         </q-btn>
       </div>
       <load-or-error :loading="loading" :count="messages.length" />
+      <q-page-sticky
+        v-show="!autoScroll"
+        position="bottom-right"
+        :offset="[10, 10]"
+      >
+        <q-btn
+          fab
+          @click="scrollToBottom"
+          color="primary"
+          round
+          icon="arrow_downward"
+        />
+      </q-page-sticky>
     </q-scroll-area>
-    <q-page-sticky
-      v-show="!autoScroll"
-      position="bottom-right"
-      :offset="[10, 10]"
-    >
-      <q-btn
-        fab
-        @click="scrollToBottom"
-        color="primary"
-        round
-        icon="arrow_downward"
-      />
-    </q-page-sticky>
-  </q-responsive>
+  </q-page>
 </template>
 
 <script>
 import { defineComponent, nextTick, ref } from "vue";
 import Message from "components/Message";
 import { api } from "boot/axios.js";
-import LoadOrError from "./LoadOrError.vue";
+import LoadOrError from "src/components/LoadOrError.vue";
 
 const MESSAGE_CAP = 250;
 const API_LIMIT = 100;

@@ -29,7 +29,6 @@
     >
       <q-tooltip>channel owner</q-tooltip>
     </q-avatar>
-    <!--    <q-btn dense no-caps flat :to="`/user/${channelId}/messages`" padding="0">-->
     <q-btn
       dense
       no-caps
@@ -65,15 +64,6 @@ export default defineComponent({
   name: "AuthorComponent",
   emits: ["clicked"],
   props: {
-    // name: {default: null},
-    // channelId: {default: null},
-    // channelUrl: {default: null},
-    // // imageUrl: {default: null},
-    // isChatOwner: {default: false},
-    // isVerified: {default: false},
-    // isChatModerator: {default: false},
-    // isChatSponsor: {default: false},
-    // badgeUrl: {default: null},
     noNav: { type: Boolean, default: false },
     author: { default: null },
   },
@@ -81,10 +71,8 @@ export default defineComponent({
     clicked(e, go) {
       e.preventDefault();
       if (this.noNav) {
-        // console.log("no nav")
         this.$emit("clicked", this.author);
       } else {
-        // console.log("was nav")
         go();
       }
     },

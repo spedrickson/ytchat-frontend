@@ -15,8 +15,8 @@
     </q-td>
     <q-td>
       <q-chip
-        :ripple="false"
         v-if="message.amountValue"
+        :ripple="false"
         style="padding: 0 0; margin: 0 0"
       >
         <q-chip
@@ -24,7 +24,9 @@
           @click="convertMoney"
           :ripple="false"
           :style="{
-            'background-color': `#${parseInt(message.bgColor).toString(16).substring(2)}`,
+            'background-color': `#${parseInt(message.bgColor ?? '0')
+              .toString(16)
+              .substring(2)}`,
           }"
         >
           <div class="superchat-text">{{ message.amountString }}</div>
@@ -34,9 +36,12 @@
           :src="message.sticker"
           alt="sticker"
         />
-        <message-content :message-ex="message.messageEx" />
+        <message-content :message-ex="message.messageEx ?? [message.message]" />
       </q-chip>
-      <message-content v-else :message-ex="message.messageEx" />
+      <message-content
+        v-else
+        :message-ex="message.messageEx ?? [message.message]"
+      />
     </q-td>
   </q-tr>
 </template>
@@ -52,12 +57,10 @@ export default defineComponent({
   name: "MessageComponent",
   components: { MessageContent, AuthorComponent },
   setup() {
-    // const {dateString} = DateFunc.useDateString()
     return {
       dateString(timestamp) {
         return date.formatDate(timestamp, "YYYY-MM-DD HH:mm:ss");
       },
-      // dateString
     };
   },
   methods: {
@@ -66,15 +69,9 @@ export default defineComponent({
       this.$router.push(`/user/${channelId}/messages`);
     },
     convertMoney() {
-      try {
-        window.open(
-          `https://google.com/search?q=${this.message.amountValue} ${this.message.currency} in USD`,
-        );
-        // const result = fx.convert(this.message.amountValue, {from: this.message.currency, to: "USD"})
-        // console.log(result)
-      } catch (e) {
-        console.log(e);
-      }
+      window.open(
+        `https://google.com/search?q=${this.message.amountValue} ${this.message.currency} in USD`,
+      );
     },
     openContext() {
       this.$q.dialog({
