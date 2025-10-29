@@ -3,6 +3,7 @@
     <q-card-section>
       <q-input
         type="search"
+        :loading="loadingState"
         debounce="500"
         autogrow
         autofocus
@@ -102,17 +103,20 @@ export default defineComponent({
         if (this.caseSensitive) {
           url += "&caseSensitive=true";
         }
+        this.loadingState = true;
         api
           .get(url)
           .then((data) => {
             console.log(data);
             this.users.push(...data.data);
+            this.loadingState = false;
           })
           .catch((reason) => {
             console.log(`error when trying to search for authors: ${reason}`);
             if (reason.response.status === 401) {
               console.log(`authentication error`);
             }
+            this.loadingState = false;
           });
       }
     },
@@ -125,6 +129,7 @@ export default defineComponent({
     return {
       dateString,
       users: ref([]),
+      loadingState: ref(false),
       pagination: {
         page: 1,
         rowsPerPage: 30,
