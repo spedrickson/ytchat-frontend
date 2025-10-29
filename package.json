@@ -13,7 +13,7 @@
   "dependencies": {
     "@quasar/cli": "^2.2.1",
     "@quasar/extras": "^1.16.4",
-    "axios": "^1.4.0",
+    "axios": "^1.13.1",
     "chart.js": "^4.3.0",
     "chartjs-plugin-sort": "^0.1.1",
     "core-js": "^3.6.5",
